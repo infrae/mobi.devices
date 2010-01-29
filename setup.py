@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(name='playmobile.devices',
       version='0.1dev',
@@ -8,9 +8,10 @@ setup(name='playmobile.devices',
       author='Infrae',
       author_email='info@infrae.com',
       url='infrae.com',
-      packages=["playmobile", "playmobile.devices"],
+      package_dir={'': 'src'},
+      packages=find_packages('src'),
+      namespace_packages=['playmobile'],
       install_requires=[
-        'distutils',
         'zope.interface',
         'playmobile.interfaces',
         'pywurfl',
