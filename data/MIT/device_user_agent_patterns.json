@@ -1,0 +1,380 @@
+[
+    {
+        "pattern": "/(Boopsie|Kratylos|MiniRedir|Jumpbot)/", 
+        "certs": 0, 
+        "description": "annoying bots that are neither search engines nor user-invoked command line tools", 
+        "device_type": "Basic", 
+        "platform": "spider"
+    }, 
+    {
+        "pattern": "iPhone", 
+        "certs": 1, 
+        "description": "iPhone", 
+        "device_type": "Webkit", 
+        "platform": "iphone"
+    }, 
+    {
+        "pattern": "iPod", 
+        "certs": 1, 
+        "description": "iPhone", 
+        "device_type": "Webkit", 
+        "platform": "iphone"
+    }, 
+    {
+        "pattern": "Aspen Simulator", 
+        "certs": 0, 
+        "description": "iPhone simulator", 
+        "device_type": "Webkit", 
+        "platform": "iphone"
+    }, 
+    {
+        "pattern": "Android", 
+        "certs": 0, 
+        "description": "Android", 
+        "device_type": "Webkit", 
+        "platform": "android"
+    }, 
+    {
+        "pattern": "webOS", 
+        "certs": 0, 
+        "description": "Palm Pre", 
+        "device_type": "Webkit", 
+        "platform": "webos"
+    }, 
+    {
+        "pattern": "BlackBerry95", 
+        "certs": 1, 
+        "description": "BlackBerry Storm, Thunder", 
+        "device_type": "Touch", 
+        "platform": "blackberry"
+    }, 
+    {
+        "pattern": "/BlackBerry(90|89|96)/", 
+        "certs": 1, 
+        "description": "BlackBerry Bold, Onyx, Tour, Curve 89xx", 
+        "device_type": "Basic", 
+        "platform": "blackberry"
+    }, 
+    {
+        "pattern": "BlackBerry8100", 
+        "certs": 0, 
+        "description": "BlackBerry Pearl", 
+        "device_type": "Basic", 
+        "platform": "blackberry"
+    }, 
+    {
+        "pattern": "BlackBerry", 
+        "certs": 0, 
+        "description": "All other BlackBerries", 
+        "device_type": "Basic", 
+        "platform": "blackberry"
+    }, 
+    {
+        "pattern": "Dash", 
+        "certs": 1, 
+        "description": "T-Mobile Dash", 
+        "device_type": "Basic", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/PPC68[05]0/", 
+        "certs": 0, 
+        "description": "HTC Mogul, Touch Pro (Sprint)", 
+        "device_type": "Touch", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "MP6950", 
+        "certs": 0, 
+        "description": "HTC Touch Diamond (Sprint)", 
+        "device_type": "Touch", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/HTC[_ ](Touch|Diamond|Elf).+IEMobile|IEMobile.+HTC[_ ](Touch|Diamond|Elf)/", 
+        "certs": 0, 
+        "description": "HTC Touch, Diamond, Elf (IE)", 
+        "device_type": "Touch", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/HTC[_ ](Touch|Diamond|Elf)/", 
+        "certs": 0, 
+        "description": "HTC Touch, Diamond, Elf", 
+        "device_type": "Touch", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/HTC[\\-_ ]P\\d{4}/", 
+        "certs": 1, 
+        "description": "HTC P series (incl. Touch Diamond, Pro, Cruise, Color)", 
+        "device_type": "Touch", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/dopod [A-Z]?8/", 
+        "certs": 1, 
+        "description": "HTC P series", 
+        "device_type": "Touch", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/HTC[\\-_ ]T/", 
+        "certs": 1, 
+        "description": "HTC T series (incl. Touch Viva, 3G, Cruise, Pro, HD)", 
+        "device_type": "Touch", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/8900.+IEMobile/", 
+        "certs": 1, 
+        "description": "HTC Tilt", 
+        "device_type": "Touch", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/HTC[\\-_ ]S\\d{3}/", 
+        "certs": 1, 
+        "description": "HTC S series", 
+        "device_type": "Basic", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "T-Mobile_Atlas", 
+        "certs": 1, 
+        "description": "T-Mobile Wing", 
+        "device_type": "Touch", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "XV6950", 
+        "certs": 1, 
+        "description": "HTC Touch Diamond (vzw)", 
+        "device_type": "Touch", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/Opera.+S[CG]H\\-i9/", 
+        "certs": 0, 
+        "description": "Samsung Omnia (Opera)", 
+        "device_type": "Touch", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "SCH-U940", 
+        "certs": 0, 
+        "description": "Samsung Glyde", 
+        "device_type": "Touch", 
+        "platform": "featurephone"
+    }, 
+    {
+        "pattern": "SPH-M800", 
+        "certs": 0, 
+        "description": "Samsung Instinct", 
+        "device_type": "Touch", 
+        "platform": "featurephone"
+    }, 
+    {
+        "pattern": "Teleca/Q05A/INT", 
+        "certs": 0, 
+        "description": "Samsung Instinct", 
+        "device_type": "Touch", 
+        "platform": "featurephone"
+    }, 
+    {
+        "pattern": "/S[CG]H\\-i[79]/", 
+        "certs": 1, 
+        "description": "Samsung Omnia, Epix, Saga", 
+        "device_type": "Touch", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/S[CG]H\\-i6/i", 
+        "certs": 1, 
+        "description": "Samsung BlackJack, Jack", 
+        "device_type": "Basic", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/(SAMSUNG|GT|S[CGP]H)-(M7600|M8800|A8[67]7|T9[12]9|R8[012]0|S5230|S8300)/", 
+        "certs": 0, 
+        "description": "Samsung 240x400 devices", 
+        "device_type": "Touch", 
+        "platform": "featurephone"
+    }, 
+    {
+        "pattern": "/(SAMSUNG|GT|S[CGP]H)-(w?d+)/", 
+        "certs": 0, 
+        "description": "Other Samsung devices", 
+        "device_type": "Basic", 
+        "platform": "featurephone"
+    }, 
+    {
+        "pattern": "/LGE?[\\- ][A-Z]+\\d+.+Teleca|Teleca.+LGE?[\\- ][A-Z]+\\d+/", 
+        "certs": 0, 
+        "description": "LG Dare, Versa, Xenon, Calisto", 
+        "device_type": "Touch", 
+        "platform": "featurephone"
+    }, 
+    {
+        "pattern": "/VX10(000|k)/i", 
+        "certs": 0, 
+        "description": "LG Voyager", 
+        "device_type": "Touch", 
+        "platform": "featurephone"
+    }, 
+    {
+        "pattern": "LG-CU9", 
+        "certs": 0, 
+        "description": "LG Vu", 
+        "device_type": "Touch", 
+        "platform": "featurephone"
+    }, 
+    {
+        "pattern": "/\\bLGE?[\\- ][A-Z]*\\d+/", 
+        "certs": 0, 
+        "description": "Other LG devices", 
+        "device_type": "Basic", 
+        "platform": "featurephone"
+    }, 
+    {
+        "pattern": "UTStar-XV6800", 
+        "certs": 1, 
+        "description": "UTStar-XV6800 (vzw)", 
+        "device_type": "Touch", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/MOTO?(|rola)\\-?Q/i", 
+        "certs": 0, 
+        "description": "Motorola Q series", 
+        "device_type": "Basic", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "Palm-D0", 
+        "certs": 0, 
+        "description": "Palm Centro, Treo 700p, Treo 750p", 
+        "device_type": "Basic", 
+        "platform": "palmos"
+    }, 
+    {
+        "pattern": "/240x320.+Opera/", 
+        "certs": 0, 
+        "description": "Motorola Q series alternative", 
+        "device_type": "Basic", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/320x240.+Opera/", 
+        "certs": 0, 
+        "description": "Motorola Q series alternative", 
+        "device_type": "Basic", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/(Smartphone|SP|PPC); 176x/", 
+        "certs": 0, 
+        "description": "", 
+        "device_type": "Basic", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/(Smartphone|SP|PPC); 240x/", 
+        "certs": 0, 
+        "description": "Palm Treo 750x, 750w, HTC Wing", 
+        "device_type": "Basic", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/(Smartphone|SP|PPC); 320x/", 
+        "certs": 0, 
+        "description": "Palm Treo 800", 
+        "device_type": "Basic", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "Symbian", 
+        "certs": 0, 
+        "description": "Symbian", 
+        "device_type": "Basic", 
+        "platform": "symbian"
+    }, 
+    {
+        "pattern": "Palm", 
+        "certs": 0, 
+        "description": "Other Palm", 
+        "device_type": "Basic", 
+        "platform": "palmos"
+    }, 
+    {
+        "pattern": "IEMobile", 
+        "certs": 1, 
+        "description": "Other IEMobile (Windows Mobile) devices", 
+        "device_type": "Basic", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "Opera Mobi", 
+        "certs": 0, 
+        "description": "Opera Mobi (Windows Mobile) devices", 
+        "device_type": "Basic", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/Windows CE.+Opera/", 
+        "certs": 0, 
+        "description": "Other Windows Mobile devices", 
+        "device_type": "Basic", 
+        "platform": "winmo"
+    }, 
+    {
+        "pattern": "/Nokia|SonyEricsson|Motorola|\\bMOT|DoCoMo/", 
+        "certs": 0, 
+        "description": "Vendors of many feature phones", 
+        "device_type": "Basic", 
+        "platform": "featurephone"
+    }, 
+    {
+        "pattern": "/Opera Mini|NetFront|Novarra|UP.Browser|Blazer|Fennec/", 
+        "certs": 0, 
+        "description": "Feature phone browsers", 
+        "device_type": "Basic", 
+        "platform": "featurephone"
+    }, 
+    {
+        "pattern": "/BREW|hiptop|Maemo|J2ME/i", 
+        "certs": 0, 
+        "description": "Feature phone platforms", 
+        "device_type": "Basic", 
+        "platform": "featurephone"
+    }, 
+    {
+        "pattern": "/[Cc]rawle?r?|[Ss]pider|\\b\\w*[Bb]ot/", 
+        "certs": 0, 
+        "description": "Robots", 
+        "device_type": "Basic", 
+        "platform": "spider"
+    }, 
+    {
+        "pattern": "/Google Wireless Transcoder|Yahoo!|urllib|libwww|Wget|curl/", 
+        "certs": 0, 
+        "description": "Google, Yahoo, Python, Perl, command line tools", 
+        "device_type": "Basic", 
+        "platform": "spider"
+    }, 
+    {
+        "pattern": "/MSIE|Firefox|Safari/", 
+        "certs": 1, 
+        "description": "Browsers", 
+        "device_type": "Basic", 
+        "platform": "computer"
+    }, 
+    {
+        "pattern": "Opera", 
+        "certs": 0, 
+        "description": "Browsers", 
+        "device_type": "Basic", 
+        "platform": "computer"
+    }
+]
