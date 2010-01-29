@@ -5,6 +5,9 @@ from playmobile.interfaces.devices import (IDevice, IClassifier,
 from playmobile.devices.wurfl import devices
 from pywurfl.algorithms import JaroWinkler
 from pywurfl.exceptions import DeviceNotFound
+
+from playmobile.devices.device import Device, WDevice
+
 import os, re
 
 try:
@@ -35,7 +38,7 @@ class WurflClassifier(object):
 
 class MITUAPatternMatcher(object):
 
-    pattern_file_path = ('data', 'MIT', 'device_user_agent_patterns.json')
+    pattern_file_path = ('..', '..', '..', 'data', 'MIT', 'device_user_agent_patterns.json')
 
     def __init__(self):
         self.__patterns = []
