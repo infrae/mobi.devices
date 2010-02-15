@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
+import os
 from setuptools import setup, find_packages
+
 
 setup(name='playmobile.devices',
       version='0.1dev',
@@ -14,6 +16,9 @@ setup(name='playmobile.devices',
       install_requires=[
         'zope.interface',
         'playmobile.interfaces',
+        'playmobile.caching',
         'pywurfl',
       ],
+      tests_requires=['nose'],
+      test_suite='nose.collector'
      )
