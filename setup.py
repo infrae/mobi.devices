@@ -3,7 +3,6 @@
 import os
 from setuptools import setup, find_packages
 
-
 setup(name='playmobile.devices',
       version='0.1dev',
       description='Mobile Device management',
@@ -20,5 +19,10 @@ setup(name='playmobile.devices',
         'pywurfl',
       ],
       tests_requires=['nose'],
-      test_suite='nose.collector'
+      test_suite='nose.collector',
+      entry_points = {
+        'paste.filter_factory': [
+            'classifier = playmobile.devices.wsgi:device_middleware_filter_factory',
+        ],
+      },
      )
