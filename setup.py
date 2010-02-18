@@ -17,8 +17,8 @@ setup(name='playmobile.devices',
         'playmobile.interfaces',
         'playmobile.caching',
         'pywurfl',
+        'nose',
       ],
-      tests_requires=['nose'],
       test_suite='nose.collector',
       entry_points = {
         'paste.filter_factory': [

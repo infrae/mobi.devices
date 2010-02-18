@@ -8,7 +8,7 @@
 
     The environment is set with an user agent string.
 
-    >>> environ = {'User-Agent': "Mozilla/5.0 (SymbianOS/9.1; U; [en]; Series60/3.0 NokiaE60/4.06.0) AppleWebKit/413 (KHTML, like Gecko) Safari/413"}
+    >>> environ = {'HTTP_USER_AGENT': "Mozilla/5.0 (SymbianOS/9.1; U; [en]; Series60/3.0 NokiaE60/4.06.0) AppleWebKit/413 (KHTML, like Gecko) Safari/413"}
     >>> wrapped(environ, lambda *args: None)
 
     Now we can check that the environment contains some info about the device.

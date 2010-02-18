@@ -9,7 +9,7 @@ class DebugDeviceMiddleware(object):
     def __call__(self, environ, start_response):
         print "Device middleware is in debug mode."
         dtype = self.get_from_params(environ['QUERY_STRING'])
-        if dtype:
+        if dtype is not None:
             print 'Device manually set to %s' % dtype.__name__
             environ['playmobile.devices.marker'] = dtype
             environ['playmobile.devices.marker_name'] = dtype.__name__
@@ -37,14 +37,11 @@ class PlaymobileDeviceMiddleware(object):
         namespace='playmobile.devices.PlaymobileDeviceMiddleware')
     cache = cache_engine.cache
 
-    def __init__(self, app, debug=False):
+    def __init__(self, app):
         self.app = app
-        self.debug = debug
-        if self.debug:
-            print "device middleware started in debug mode."
 
     def __call__(self, environ, start_response):
-        ua = environ.get('User-Agent', '')
+        ua = environ.get('HTTP_USER_AGENT', '')
         device = self.cache('select_ua', lambda : get_device(ua))
         dtype = device.get_type()
         environ['playmobile.devices.marker'] = dtype
