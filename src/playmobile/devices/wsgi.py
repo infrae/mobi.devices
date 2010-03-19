@@ -1,7 +1,10 @@
 from playmobile.devices.classifiers import get_device
 from playmobile.caching import Cache
 
+
 class DebugDeviceMiddleware(object):
+
+    DEBUG_DEVICE_TYPE = None
 
     def __init__(self, app):
         self.app = app
@@ -21,13 +24,18 @@ class DebugDeviceMiddleware(object):
         from playmobile.interfaces.devices import (
             IBasicDeviceType, IStandardDeviceType, IAdvancedDeviceType)
         params = parse_qs(query_string)
-        device_type = params.get('dt', [None])[0]
-        if device_type == 'basic':
+        self.DEBUG_DEVICE_TYPE = params.get('dt', [None])[0] \
+            or self.DEBUG_DEVICE_TYPE
+        if self.DEBUG_DEVICE_TYPE == 'basic':
             return IBasicDeviceType
-        elif device_type == 'standard':
+        elif self.DEBUG_DEVICE_TYPE == 'standard':
             return IStandardDeviceType
-        elif device_type == 'advanced':
+        elif self.DEBUG_DEVICE_TYPE == 'advanced':
             return IAdvancedDeviceType
+        elif self.DEBUG_DEVICE_TYPE in ['off', 'false', 'disable']:
+            self.DEBUG_DEVICE_TYPE = None
+            return IAdvancedDeviceType
+
         return None
 
 
