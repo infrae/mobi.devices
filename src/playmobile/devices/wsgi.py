@@ -34,7 +34,6 @@ class DebugDeviceMiddleware(object):
             return IAdvancedDeviceType
         elif self.DEBUG_DEVICE_TYPE in ['off', 'false', 'disable']:
             self.DEBUG_DEVICE_TYPE = None
-            return IAdvancedDeviceType
 
         return None
 
@@ -50,7 +49,7 @@ class PlaymobileDeviceMiddleware(object):
 
     def __call__(self, environ, start_response):
         ua = environ.get('HTTP_USER_AGENT', '')
-        device = self.cache('select_ua', lambda : get_device(ua))
+        device = self.cache('select_ua:%s' % ua, lambda : get_device(ua))
         dtype = device.get_type()
         environ['playmobile.devices.marker'] = dtype
         environ['playmobile.devices.marker_name'] = dtype.__name__
