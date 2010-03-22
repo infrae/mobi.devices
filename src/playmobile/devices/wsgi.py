@@ -61,7 +61,6 @@ class PlaymobileDeviceMiddleware(object):
         dtype = device.get_type()
         environ['playmobile.devices.marker'] = dtype
         environ['playmobile.devices.marker_name'] = dtype.__name__
-        print dtype.__name__
         return self.app(environ, start_response)
 
 
