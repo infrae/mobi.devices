@@ -1,0 +1,9 @@
+[
+    {
+        "pattern": "/iPhone Simulator/",
+        "certs": 0,
+        "description": "Simulator for the iPhone",
+        "device_type": "Webkit",
+        "platform": "iphone"
+    }
+]

@@ -12,7 +12,7 @@
         "description": "iPhone", 
         "device_type": "Webkit", 
         "platform": "iphone"
-    }, 
+    },
     {
         "pattern": "iPod", 
         "certs": 1, 

@@ -33,55 +33,74 @@ class WurflClassifier(object):
             wurfl_device = \
                 devices.select_ua(self.user_agent,
                     search=JaroWinkler(accuracy=0.85))
+            # logger.debug("Device found: %s" % wurfl_device)
             return WDevice(wurfl_device)
         # this is bad but a weird but makes DeviceNotFound not catched if
         # except DeviceNotFound is used
-        except Exception as e:
+        except Exception, e:
             logger.debug("Error during wurfl lookup :%s" % str(e))
         return None
+
+class StringMatcher(object):
+    def __init__(self, string):
+        self.pattern = string
+
+    def __call__(self, against):
+        return (against.find(self.pattern) > -1)
+
+
+class RegexMatcher(object):
+    def __init__(self, string):
+        self.pattern = re.compile(string)
+
+    def __call__(self, against):
+        return (self.pattern.search(against) is not None)
 
 
 class MITUAPatternMatcher(object):
 
-    pattern_file_path = ('..', '..', '..', 'data',
-        'MIT', 'device_user_agent_patterns.json')
+    pattern_file_paths = [
+        '../../../data/MIT/device_user_agent_patterns.json',
+        '../../../data/Infrae/device_user_agent_patterns.json',
+    ]
 
     def __init__(self):
         self.__patterns = []
 
     def load_patterns(self):
-        filename = os.path.join(os.path.dirname(__file__),
-            *self.pattern_file_path)
-        fd = open(filename, 'r')
-        try:
-            data = json.load(fd)
-            for item in data:
-                item['pattern'] = self.__make_regex(item['pattern'])
-            self.__patterns = data
-        finally:
-            fd.close()
+        self.__patterns = []
+        for path in self.pattern_file_paths:
+            filepath = os.path.join(os.path.dirname(__file__), path)
+            fd = open(filepath, 'r')
+            try:
+                data = json.load(fd)
+                for item in data:
+                    item['matcher'] = self.__build_matcher(item['pattern'])
+                self.__patterns += data
+            finally:
+                fd.close()
 
     def lookup(self, ua):
         # The order of the patterns is important
         for dev_info in self.__patterns:
-            pattern = dev_info['pattern']
-            if re.match(pattern, ua):
-                logger.debug("User Agent matched %s in MIT pattern list" %
-                    str(pattern))
+            matcher = dev_info['matcher']
+            if matcher(ua):
+                logger.debug("User Agent matched against MIT patterns")
                 logger.debug("Device info : %s" % dev_info)
                 return dev_info
         logger.debug("Device lookup failed in MIT db.")
         return None
 
-    def __make_regex(self, pattern_string):
+    def __build_matcher(self, pattern_string):
         """ User agent in data can be either a regex e.g: /Opera/ or a string
         Opera. A string will be converted to a regex like this :
 
             Opera -> r/^Opera/
-
-        which is what we want.
+            /Opera/ -> r/Opera/
         """
-        return re.compile(pattern_string)
+        if pattern_string.startswith('/') and pattern_string.endswith('/'):
+            return RegexMatcher(pattern_string[1:-1])
+        return StringMatcher(pattern_string)
 
 
 mit_matcher = MITUAPatternMatcher()
