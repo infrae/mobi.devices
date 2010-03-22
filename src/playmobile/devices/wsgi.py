@@ -1,6 +1,12 @@
 from playmobile.devices.classifiers import get_device
 from playmobile.caching import Cache
 
+import logging
+logger = logging.getLogger('playmobile.devices.wsgi')
+
+# In your pastie ini file add :
+# log_stream = sys.stdout
+# log_level = logging.DEBUG
 
 class DebugDeviceMiddleware(object):
 
@@ -13,7 +19,8 @@ class DebugDeviceMiddleware(object):
         print "Device middleware is in debug mode."
         dtype = self.get_from_params(environ['QUERY_STRING'])
         if dtype is not None:
-            print 'Device manually set to %s' % dtype.__name__
+            logger.debug('DEBUG MODE: Device manually set to %s' %
+                dtype.__name__)
             environ['playmobile.devices.marker'] = dtype
             environ['playmobile.devices.marker_name'] = dtype.__name__
             return self.app(environ, start_response)
@@ -49,7 +56,7 @@ class PlaymobileDeviceMiddleware(object):
 
     def __call__(self, environ, start_response):
         ua = environ.get('HTTP_USER_AGENT', '')
-        print ua
+        logger.debug("UserAgent: %s" % ua)
         device = self.cache('select_ua:%s' % ua, lambda : get_device(ua))
         dtype = device.get_type()
         environ['playmobile.devices.marker'] = dtype
@@ -65,3 +72,5 @@ def device_middleware_filter_factory(global_conf, **local_conf):
         else:
             return PlaymobileDeviceMiddleware(app)
     return filter
+
+

@@ -10,6 +10,10 @@ from playmobile.devices.device import Device, WDevice
 
 import os, re
 
+
+import logging
+logger = logging.getLogger('playmobile.devices.classifiers')
+
 try:
     # Python 2.6
     import json
@@ -25,20 +29,22 @@ class WurflClassifier(object):
 
     def __call__(self):
         try:
+            logger.debug("Lookup the user agent against wurfl db.")
             wurfl_device = \
                 devices.select_ua(self.user_agent,
                     search=JaroWinkler(accuracy=0.85))
             return WDevice(wurfl_device)
         # this is bad but a weird but makes DeviceNotFound not catched if
         # except DeviceNotFound is used
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("Error during wurfl lookup :%s" % str(e))
         return None
 
 
 class MITUAPatternMatcher(object):
 
-    pattern_file_path = ('..', '..', '..', 'data', 'MIT', 'device_user_agent_patterns.json')
+    pattern_file_path = ('..', '..', '..', 'data',
+        'MIT', 'device_user_agent_patterns.json')
 
     def __init__(self):
         self.__patterns = []
@@ -60,7 +66,11 @@ class MITUAPatternMatcher(object):
         for dev_info in self.__patterns:
             pattern = dev_info['pattern']
             if re.match(pattern, ua):
+                logger.debug("User Agent matched %s in MIT pattern list" %
+                    str(pattern))
+                logger.debug("Device info : %s" % dev_info)
                 return dev_info
+        logger.debug("Device lookup failed in MIT db.")
         return None
 
     def __make_regex(self, pattern_string):
