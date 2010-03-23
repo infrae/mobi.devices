@@ -18,6 +18,7 @@ setup(name='playmobile.devices',
         'playmobile.caching',
         'pywurfl',
         'nose',
+        'webob'
       ],
       test_suite='nose.collector',
       entry_points = {
