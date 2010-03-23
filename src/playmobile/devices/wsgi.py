@@ -55,16 +55,16 @@ class PlaymobileDeviceMiddleware(object):
         return response.app_iter
 
     def device_type_from_cookie(self, request):
-        cookie_val = request.cookies.get(self.PARAM_NAME, None)
-        dtype = dict(self.mapping).get(cookie_val, None)
+        cookie_val = request.cookies.get(self.PARAM_NAME)
+        dtype = dict(self.mapping).get(cookie_val)
         return dtype
 
     def device_type_from_get_params(self, request):
-        param = request.GET.get(self.PARAM_NAME, None)
+        param = request.GET.get(self.PARAM_NAME)
         if param == 'off':
             return self.device_type_from_user_agent(request)
 
-        dtype = dict(self.mapping).get(param, None)
+        dtype = dict(self.mapping).get(param)
         if dtype is not None:
             logger.debug('device manually set to %s' % dtype.__name__)
         return dtype
@@ -77,7 +77,7 @@ class PlaymobileDeviceMiddleware(object):
 
     def set_device_type_on_cookie(self, response, dtype):
         val = dict(self.reverse_mapping).get(dtype, IBasicDeviceType)
-        cookie_val = response.request.cookies.get(self.PARAM_NAME, None)
+        cookie_val = response.request.cookies.get(self.PARAM_NAME)
         if cookie_val is None or \
                 cookie_val != dict(self.reverse_mapping).get(dtype, _marker):
             response.set_cookie(self.PARAM_NAME, val,
