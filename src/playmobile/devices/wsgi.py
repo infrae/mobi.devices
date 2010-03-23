@@ -1,5 +1,10 @@
+from webob import Request
+
 from playmobile.devices.classifiers import get_device
 from playmobile.caching import Cache
+from playmobile.interfaces.devices import (
+    IBasicDeviceType, IStandardDeviceType, IAdvancedDeviceType)
+
 
 import logging
 logger = logging.getLogger('playmobile.devices.wsgi')
@@ -8,68 +13,85 @@ logger = logging.getLogger('playmobile.devices.wsgi')
 # log_stream = sys.stdout
 # log_level = logging.DEBUG
 
-class DebugDeviceMiddleware(object):
-
-    DEBUG_DEVICE_TYPE = None
-
-    def __init__(self, app):
-        self.app = app
-
-    def __call__(self, environ, start_response):
-        print "Device middleware is in debug mode."
-        dtype = self.get_from_params(environ['QUERY_STRING'])
-        if dtype is not None:
-            logger.debug('DEBUG MODE: Device manually set to %s' %
-                dtype.__name__)
-            environ['playmobile.devices.marker'] = dtype
-            environ['playmobile.devices.marker_name'] = dtype.__name__
-            return self.app(environ, start_response)
-        return PlaymobileDeviceMiddleware(self.app)(environ, start_response)
-
-    def get_from_params(self, query_string):
-        from cgi import parse_qs
-        from playmobile.interfaces.devices import (
-            IBasicDeviceType, IStandardDeviceType, IAdvancedDeviceType)
-        params = parse_qs(query_string)
-        self.DEBUG_DEVICE_TYPE = params.get('dt', [None])[0] \
-            or self.DEBUG_DEVICE_TYPE
-        if self.DEBUG_DEVICE_TYPE == 'basic':
-            return IBasicDeviceType
-        elif self.DEBUG_DEVICE_TYPE == 'standard':
-            return IStandardDeviceType
-        elif self.DEBUG_DEVICE_TYPE == 'advanced':
-            return IAdvancedDeviceType
-        elif self.DEBUG_DEVICE_TYPE in ['off', 'false', 'disable']:
-            self.DEBUG_DEVICE_TYPE = None
-
-        return None
-
+_marker = object()
 
 class PlaymobileDeviceMiddleware(object):
+    """ The middleware aims at detecting devices type from User agents.
+    Once found a cookie is set to cache the result for later queries.
+    
+    In debugging mode the GET parameter "PARAM_NAME" can be manually set
+    to simulate device detection. It can then be disabled by setting it to
+    "off".
+    """
 
     cache_engine = Cache(
         namespace='playmobile.devices.PlaymobileDeviceMiddleware')
     cache = cache_engine.cache
 
-    def __init__(self, app):
+    PARAM_NAME = '__dt'
+
+    mapping = [
+        ('advanced', IAdvancedDeviceType),
+        ('standard', IStandardDeviceType),
+        ('basic', IBasicDeviceType),
+    ]
+
+    reverse_mapping = map(lambda (a,b,): (b,a,), mapping)
+
+    def __init__(self, app, debug=False):
+        self.debug = debug
+        if self.debug:
+            logger.info('PlaymobileDeviceMiddleware start in debug mode.')
         self.app = app
 
     def __call__(self, environ, start_response):
-        ua = environ.get('HTTP_USER_AGENT', '')
-        logger.debug("UserAgent: %s" % ua)
+        request = Request(environ)
+        dtype = (self.debug and self.device_type_from_get_params(request)) or \
+            self.device_type_from_cookie(request) or \
+            self.device_type_from_user_agent(request)
+
+        request.environ['playmobile.devices.marker'] = dtype
+        request.environ['playmobile.devices.marker_name'] = dtype.__name__
+        response = request.get_response(self.app)
+        self.set_device_type_on_cookie(response, dtype)
+        start_response(response.status,
+            [a for a in response.headers.iteritems()])
+        return response.app_iter
+
+    def device_type_from_cookie(self, request):
+        cookie_val = request.cookies.get(self.PARAM_NAME, None)
+        dtype = dict(self.mapping).get(cookie_val, None)
+        return dtype
+
+    def device_type_from_get_params(self, request):
+        param = request.GET.get(self.PARAM_NAME, None)
+        if param == 'off':
+            return self.device_type_from_user_agent(request)
+
+        dtype = dict(self.mapping).get(param, None)
+        if dtype is not None:
+            logger.debug('device manually set to %s' % dtype.__name__)
+        return dtype
+
+    def device_type_from_user_agent(self, request):
+        ua = request.environ.get('HTTP_USER_AGENT', '')
+        logger.debug("get device from UserAgent: %s" % ua)
         device = self.cache('select_ua:%s' % ua, lambda : get_device(ua))
-        dtype = device.get_type()
-        environ['playmobile.devices.marker'] = dtype
-        environ['playmobile.devices.marker_name'] = dtype.__name__
-        return self.app(environ, start_response)
+        return device.get_type()
+
+    def set_device_type_on_cookie(self, response, dtype):
+        val = dict(self.reverse_mapping).get(dtype, IBasicDeviceType)
+        cookie_val = response.request.cookies.get(self.PARAM_NAME, None)
+        if cookie_val is None or \
+                cookie_val != dict(self.reverse_mapping).get(dtype, _marker):
+            response.set_cookie(self.PARAM_NAME, val,
+                max_age=10000000, path='/', secure=False)
 
 
 def device_middleware_filter_factory(global_conf, **local_conf):
     def filter(app):
-        if global_conf.get('debug', False):
-            return DebugDeviceMiddleware(app)
-        else:
-            return PlaymobileDeviceMiddleware(app)
+        debug = global_conf.get('debug', False)
+        return PlaymobileDeviceMiddleware(app, debug)
     return filter
 
 
