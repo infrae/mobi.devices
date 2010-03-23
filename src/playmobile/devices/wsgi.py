@@ -9,10 +9,6 @@ from playmobile.interfaces.devices import (
 import logging
 logger = logging.getLogger('playmobile.devices.wsgi')
 
-# In your pastie ini file add :
-# log_stream = sys.stdout
-# log_level = logging.DEBUG
-
 _marker = object()
 
 class PlaymobileDeviceMiddleware(object):
@@ -25,7 +21,7 @@ class PlaymobileDeviceMiddleware(object):
     """
 
     cache_engine = Cache(
-        namespace='playmobile.devices.PlaymobileDeviceMiddleware')
+        namespace=__module__)
     cache = cache_engine.cache
 
     PARAM_NAME = '__dt'
