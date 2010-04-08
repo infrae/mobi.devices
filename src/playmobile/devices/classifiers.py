@@ -7,6 +7,7 @@ from pywurfl.algorithms import JaroWinkler
 from pywurfl.exceptions import DeviceNotFound
 
 from playmobile.devices.device import MITDevice, WDevice
+from playmobile.devices import DATA_DIR
 
 import os, re
 

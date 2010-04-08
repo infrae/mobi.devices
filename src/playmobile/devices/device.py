@@ -22,11 +22,11 @@ class MITDevice(object):
     def get_type(self):
         device_type = self.info['device_type']
         if device_type == 'Webkit':
-            return Device(IAdvancedDeviceType)
+            return IAdvancedDeviceType
         elif device_type == 'Touch':
-            return Device(IStandardDeviceType)
+            return IStandardDeviceType
         elif device_type == 'Basic':
-            return Device(IBasicDeviceType)
+            return IBasicDeviceType
         return None
 
     def get_platform(self):
@@ -41,7 +41,7 @@ class WDevice(object):
         self.__device_type = None
 
     def get_platform(self):
-        
+        pass
 
     def get_type(self):
         if self.__device_type:
