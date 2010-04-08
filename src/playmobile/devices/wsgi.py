@@ -1,5 +1,5 @@
 from webob import Request
-
+from playmobile.devices import cache
 from playmobile.devices.classifiers import get_device
 from playmobile.caching import Cache
 from playmobile.interfaces.devices import (
@@ -8,6 +8,7 @@ from playmobile.interfaces.devices import (
 
 import logging
 logger = logging.getLogger('playmobile.devices.wsgi')
+
 
 _marker = object()
 
@@ -19,10 +20,6 @@ class PlaymobileDeviceMiddleware(object):
     to simulate device detection. It can then be disabled by setting it to
     "off".
     """
-
-    cache_engine = Cache(
-        namespace=__module__)
-    cache = cache_engine.cache
 
     PARAM_NAME = '__dt'
 
@@ -72,7 +69,12 @@ class PlaymobileDeviceMiddleware(object):
     def device_type_from_user_agent(self, request):
         ua = request.environ.get('HTTP_USER_AGENT', '')
         logger.debug("get device from UserAgent: %s" % ua)
-        device = self.cache('select_ua:%s' % ua, lambda : get_device(ua))
+
+        @cache.region('playmobile.devices')
+        def lookup(user_agent):
+            return get_device(user_agent)
+
+        device = lookup(ua)
         return device.get_type()
 
     def set_device_type_on_cookie(self, response, dtype):
