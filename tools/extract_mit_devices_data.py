@@ -17,10 +17,15 @@ whitelist_table = Table('mobi_service_whitelist', metadata,
     Column('certs', Integer(1)),
     Column('description', String(255))
 )
+platform_table = Table('mobi_service_platform', metadata,
+    Column('platform', String(15)),
+    Column('description', String(63)))
+
 
 connection = engine.connect()
 infos = connection.execute(select([whitelist_table])).fetchall()
 device_infos = []
+platforms = {}
 
 for pattern, device_type, platform, certs, description in infos:
     d = {
@@ -32,8 +37,18 @@ for pattern, device_type, platform, certs, description in infos:
     }
     device_infos.append(d)
 
-export_file = path.join(path.dirname(__file__), '..', 'data', 'MIT',
-    'device_user_agent_patterns.json')
+infos = connection.execute(select([platform_table])).fetchall()
+
+for platform, description in infos:
+    platforms[platform] = description
+
+export_dir = path.join(path.dirname(__file__), '..', 'data', 'MIT')
+
+export_file = path.join(export_dir, 'device_user_agent_patterns.json')
+platform_file = path.join(export_dir, 'platforms.json')
 
 with open(export_file, 'w') as fd:
     json.dump(device_infos, fd, indent=4)
+
+with open(platform_file, 'w') as fd:
+    json.dump(platforms, fd, indent=4)
