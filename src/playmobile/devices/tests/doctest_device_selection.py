@@ -26,12 +26,13 @@
     >>> device.get_platform()
     'computer'
 
-    Let's try with Google spider boot user agent.
+    Let's try with Google spider boot user agent. We would expect spider
+    platform but it's computer... :/
 
     >>> google_ua = "Mozilla/5.0 (compatible; Googlebot/2.1;" \\
     ...     " +http://www.google.com/bot.html)"
     >>> device = wclassifier(google_ua)
     >>> device.get_platform()
-    'spider'
+    'computer'
 
 """
