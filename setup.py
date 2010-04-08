@@ -16,7 +16,7 @@ setup(name='playmobile.devices',
         'zope.interface',
         'playmobile.interfaces',
         'playmobile.caching',
-        'pywurfl',
+        'pywurfl>=7.0.0',
         'nose',
         'webob'
       ],

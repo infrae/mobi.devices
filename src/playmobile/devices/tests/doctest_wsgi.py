@@ -2,6 +2,7 @@
     The TestApp is wrapped into the middleware.
 
     >>> from playmobile.devices.wsgi import PlaymobileDeviceMiddleware
+    >>> from playmobile.devices.wsgi import serialize_cookie, deserialize_cookie
 
     >>> app = TestApp()
     >>> wrapped = PlaymobileDeviceMiddleware(app)
@@ -10,7 +11,9 @@
 
     >>> from webob import Request
     >>> request = Request.blank('/')
-    >>> request.environ['HTTP_USER_AGENT'] = "Mozilla/5.0 (SymbianOS/9.1; U; [en]; Series60/3.0 NokiaE60/4.06.0) AppleWebKit/413 (KHTML, like Gecko) Safari/413"
+    >>> request.environ['HTTP_USER_AGENT'] = "Mozilla/5.0 (SymbianOS/9.1;" \\
+    ...     " U; [en]; Series60/3.0 NokiaE60/4.06.0) AppleWebKit/413" \\
+    ...     " (KHTML, like Gecko) Safari/413"
     >>> request.call_application(wrapped) #doctest: +ELLIPSIS
     ('200 Ok..., ['hello!'])
 
@@ -22,7 +25,10 @@
     <InterfaceClass playmobile.interfaces.devices.IBasicDeviceType>
 
     >>> request = Request.blank('/')
-    >>> request.environ['HTTP_USER_AGENT'] = "Mozilla/5.0 (iPhone Simulator; U; CPU iPhone OS 3_1_3 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7E18 Safari/528.16"
+    >>> request.environ['HTTP_USER_AGENT'] = "Mozilla/5.0 (iPhone" \\
+    ...     " Simulator; U; CPU iPhone OS 3_1_3 like Mac OS X; en-us)" \\
+    ...     " AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0" \\
+    ...     " Mobile/7E18 Safari/528.16"
     >>> request.call_application(wrapped) #doctest: +ELLIPSIS
     ('200 Ok..., ['hello!'])
     >>> app.environ['playmobile.devices.marker_name']
@@ -36,12 +42,13 @@
     >>> request = Request.blank('/')
     >>> response = request.get_response(wrapped)
     >>> response.headers['Set-Cookie'] # doctest: +ELLIPSIS
-    '__dt=basic;...'
+    '__devinfo=...'
 
     When client sends a cookie it is used as a cache.
 
     >>> request = Request.blank('/')
-    >>> request.environ['HTTP_COOKIE'] = '__dt=advanced'
+    >>> request.environ['HTTP_COOKIE'] = '__devinfo=%s' % serialize_cookie(
+    ...     {'type': 'advanced', 'platform': 'spider'})
     >>> response = request.get_response(wrapped)
     >>> response.headers.get('Set-Cookie', None) is None
     True
@@ -49,7 +56,8 @@
     'IAdvancedDeviceType'
     >>> app.environ['playmobile.devices.marker']
     <InterfaceClass playmobile.interfaces.devices.IAdvancedDeviceType>
-
+    >>> app.environ['playmobile.devices.platform']
+    'spider'
 """
 
 

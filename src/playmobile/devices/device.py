@@ -1,22 +1,28 @@
 from zope.interface import implements
 from playmobile.interfaces.devices import (IDevice,
     IStandardDeviceType, IAdvancedDeviceType, IBasicDeviceType)
-
+from playmobile.devices import PLATFORMS
+from playmobile.devices.wurfl import devices as wdevices
 
 class Device(object):
     implements(IDevice)
 
-    def __init__(self, type_):
+    def __init__(self, user_agent, type_, platform=""):
+        self.user_agent = user_agent
         self.type = type_
+        self.platform = platform
 
     def get_type(self):
         return self.type
 
+    def get_platform(self):
+        return self.platform
 
 class MITDevice(object):
     implements(IDevice)
 
-    def __init__(self, info):
+    def __init__(self, user_agent, info):
+        self.user_agent = user_agent
         self.info = info
 
     def get_type(self):
@@ -36,12 +42,35 @@ class MITDevice(object):
 class WDevice(object):
     implements(IDevice)
 
-    def __init__(self, wurfl_device):
+    def __init__(self, user_agent, wurfl_device):
+        self.user_agent = user_agent
         self.wurfl_device = wurfl_device
         self.__device_type = None
 
     def get_platform(self):
-        pass
+        platform = None
+        if self.wurfl_device.is_wireless_device:
+            platform_names = PLATFORMS.keys()
+            os = self.wurfl_device.device_os
+            for name in platform_names:
+                if name in os:
+                    return name
+            return 'featurephone'
+        else:
+            fallbacks = self._fallback_devices()
+            for fallback in fallbacks:
+                if 'bot' in fallback.devid or \
+                        fallback.devid == 'generic_web_crawler':
+                    return 'spider'
+            return 'computer'
+
+    def _fallback_devices(self):
+        device = self.wurfl_device
+        fallbacks = []
+        while wdevices.devids.has_key(device.fall_back):
+            device = wdevices.devids[device.fall_back]
+            fallbacks.append(device)
+        return fallbacks
 
     def get_type(self):
         if self.__device_type:
@@ -49,10 +78,10 @@ class WDevice(object):
         support_level = int(self.wurfl_device.xhtml_support_level)
 
         if support_level == 4:
-            self.__device_type = IAdvancedDeviceType
+            return IAdvancedDeviceType
         elif support_level == 3:
-            self.__device_type = IStandardDeviceType
+            return IStandardDeviceType
         else:
-            self.__device_type = IBasicDeviceType
+            return IBasicDeviceType
 
-        return self.__device_type
+
