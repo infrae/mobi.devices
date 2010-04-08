@@ -2,6 +2,7 @@ from zope.interface import implements
 from playmobile.interfaces.devices import (IDevice,
     IStandardDeviceType, IAdvancedDeviceType, IBasicDeviceType)
 
+
 class Device(object):
     implements(IDevice)
 
@@ -12,12 +13,35 @@ class Device(object):
         return self.type
 
 
+class MITDevice(object):
+    implements(IDevice)
+
+    def __init__(self, info):
+        self.info = info
+
+    def get_type(self):
+        device_type = self.info['device_type']
+        if device_type == 'Webkit':
+            return Device(IAdvancedDeviceType)
+        elif device_type == 'Touch':
+            return Device(IStandardDeviceType)
+        elif device_type == 'Basic':
+            return Device(IBasicDeviceType)
+        return None
+
+    def get_platform(self):
+        return self.info.get('platform')
+
+
 class WDevice(object):
     implements(IDevice)
 
     def __init__(self, wurfl_device):
         self.wurfl_device = wurfl_device
         self.__device_type = None
+
+    def get_platform(self):
+        
 
     def get_type(self):
         if self.__device_type:

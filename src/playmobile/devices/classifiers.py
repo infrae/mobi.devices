@@ -6,7 +6,7 @@ from playmobile.devices.wurfl import devices
 from pywurfl.algorithms import JaroWinkler
 from pywurfl.exceptions import DeviceNotFound
 
-from playmobile.devices.device import Device, WDevice
+from playmobile.devices.device import MITDevice, WDevice
 
 import os, re
 
@@ -60,8 +60,8 @@ class RegexMatcher(object):
 class MITUAPatternMatcher(object):
 
     pattern_file_paths = [
-        '../../../data/MIT/device_user_agent_patterns.json',
-        '../../../data/Infrae/device_user_agent_patterns.json',
+        'MIT/device_user_agent_patterns.json',
+        'Infrae/device_user_agent_patterns.json',
     ]
 
     def __init__(self):
@@ -70,7 +70,7 @@ class MITUAPatternMatcher(object):
     def load_patterns(self):
         self.__patterns = []
         for path in self.pattern_file_paths:
-            filepath = os.path.join(os.path.dirname(__file__), path)
+            filepath = os.path.join(DATA_DIR, path)
             fd = open(filepath, 'r')
             try:
                 data = json.load(fd)
@@ -119,14 +119,7 @@ class MITClassifier(object):
         device_infos = self.patterns.lookup(self.user_agent)
         if device_infos is None:
             return None
-
-        device_type = device_infos['device_type']
-        if device_type == 'Webkit':
-            return Device(IAdvancedDeviceType)
-        elif device_type == 'Touch':
-            return Device(IStandardDeviceType)
-        else:
-            return Device(IBasicDeviceType)
+        return MITDevice(device_infos)
 
 
 def get_device(ua):
