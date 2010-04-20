@@ -65,9 +65,12 @@ class PlaymobileDeviceMiddleware(object):
             dtype = device.get_type() or IBasicDeviceType
             request.environ['playmobile.devices.marker'] = dtype
             request.environ['playmobile.devices.marker_name'] = dtype.__name__
-            request.environ['playmobile.devices.platform'] = device.get_platform()
+            request.environ['playmobile.devices.platform'] = \
+                device.get_platform()
 
         response = request.get_response(self.app)
+
+        logger.info('device: %s - %s' % (dtype.__name__, device.get_platform(),))
 
         if device is not None:
             self.set_device_on_cookie(response, device)
@@ -122,7 +125,8 @@ class PlaymobileDeviceMiddleware(object):
 
 def device_middleware_filter_factory(global_conf, **local_conf):
     def filter(app):
-        debug = global_conf.get('debug', False)
+        debug = global_conf.get('debug', False) or \
+            local_conf.get('debug', False)
         return PlaymobileDeviceMiddleware(app, debug)
     return filter
 
