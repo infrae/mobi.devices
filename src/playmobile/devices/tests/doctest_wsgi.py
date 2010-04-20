@@ -57,7 +57,7 @@
     >>> app.environ['playmobile.devices.marker']
     <InterfaceClass playmobile.interfaces.devices.IAdvancedDeviceType>
     >>> app.environ['playmobile.devices.platform']
-    'spider'
+    u'spider'
 """
 
 

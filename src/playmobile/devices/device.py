@@ -16,7 +16,7 @@ class Device(object):
         return self.type
 
     def get_platform(self):
-        return self.platform
+        return unicode(self.platform)
 
 class MITDevice(object):
     implements(IDevice)
@@ -36,7 +36,7 @@ class MITDevice(object):
         return None
 
     def get_platform(self):
-        return self.info.get('platform')
+        return unicode(self.info.get('platform', ''))
 
 
 class WDevice(object):
@@ -55,14 +55,14 @@ class WDevice(object):
             for name in platform_names:
                 if name in os:
                     return name
-            return 'featurephone'
+            return u'featurephone'
         else:
             fallbacks = self._fallback_devices()
             for fallback in fallbacks:
                 if 'bot' in fallback.devid or \
                         fallback.devid == 'generic_web_crawler':
-                    return 'spider'
-            return 'computer'
+                    return u'spider'
+            return u'computer'
 
     def _fallback_devices(self):
         device = self.wurfl_device

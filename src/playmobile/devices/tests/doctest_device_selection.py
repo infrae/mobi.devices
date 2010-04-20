@@ -12,7 +12,7 @@
     >>> device.get_type()
     <InterfaceClass playmobile.interfaces.devices.IBasicDeviceType>
     >>> device.get_platform()
-    'symbian'
+    u'symbian'
 
     Let's check the Wurfl classifier with computer devices.
 
@@ -24,7 +24,7 @@
     >>> device  # doctest: +ELLIPSIS
     <playmobile.devices.device.WDevice ...>
     >>> device.get_platform()
-    'computer'
+    u'computer'
 
     Let's try with Google spider boot user agent. We would expect spider
     platform but it's computer... :/
@@ -33,6 +33,6 @@
     ...     " +http://www.google.com/bot.html)"
     >>> device = wclassifier(google_ua)
     >>> device.get_platform()
-    'computer'
+    u'computer'
 
 """
