@@ -9,11 +9,7 @@ from playmobile.interfaces.devices import (
 
 import logging
 import base64
-try:
-    # Python 2.6
-    import json
-except ImportError:
-    import simplejson as json
+import json
 
 logger = logging.getLogger('playmobile.devices.wsgi')
 
@@ -40,13 +36,14 @@ class PlaymobileDeviceMiddleware(object):
 
     PARAM_NAME = '__devinfo'
 
-    mapping = [
+    _mapping = [
         ('advanced', IAdvancedDeviceType),
         ('standard', IStandardDeviceType),
         ('basic', IBasicDeviceType),
     ]
 
-    reverse_mapping = map(lambda (a,b,): (b,a,), mapping)
+    mapping = dict(_mapping)
+    reverse_mapping = dict(map(lambda (a,b,): (b,a,), _mapping))
 
     def __init__(self, app, debug=False):
         self.debug = debug
@@ -57,20 +54,17 @@ class PlaymobileDeviceMiddleware(object):
 
     def __call__(self, environ, start_response):
         request = Request(environ)
-        device = (self.debug and self.device_from_get_params(request)) or \
+        device = self.device_from_get_params(request) or \
             self.device_from_cookie(request) or \
             self.device_from_user_agent(request)
 
         if device is not None:
-            dtype = device.get_type() or IBasicDeviceType
-            request.environ['playmobile.devices.marker'] = dtype
-            request.environ['playmobile.devices.marker_name'] = dtype.__name__
-            request.environ['playmobile.devices.platform'] = \
-                device.get_platform()
+            self.set_device_on_request(request, device)
 
         response = request.get_response(self.app)
 
-        logger.info('device: %s - %s' % (dtype.__name__, device.get_platform(),))
+        logger.info('device: %s - %s' %
+            (device.get_type(), device.get_platform(),))
 
         if device is not None:
             self.set_device_on_cookie(response, device)
@@ -79,25 +73,39 @@ class PlaymobileDeviceMiddleware(object):
             [a for a in response.headers.iteritems()])
         return response.app_iter
 
+    def set_device_on_request(self, request, device):
+        dtype = device.get_type() or IBasicDeviceType
+        request.environ['playmobile.devices.type'] = \
+            self.reverse_mapping[dtype]
+        request.environ['playmobile.devices.marker'] = dtype
+        request.environ['playmobile.devices.marker_name'] = dtype.__name__
+        request.environ['playmobile.devices.platform'] = \
+            device.get_platform()
+
     def device_from_cookie(self, request):
         data = request.cookies.get(self.PARAM_NAME, None)
         if data is not None:
             cookie_val = deserialize_cookie(data)
-            dtype = dict(self.mapping).get(cookie_val['type'],
+            dtype = self.mapping.get(cookie_val['type'],
                 IBasicDeviceType)
             return Device(request.environ.get('HTTP_USER_AGENT'),
                 dtype, platform=cookie_val['platform'])
         return None
 
     def device_from_get_params(self, request):
+        if not self.debug: return None
+
         param = request.GET.get(self.PARAM_NAME)
         if param == 'off':
             return self.device_from_user_agent(request)
 
-        dtype = dict(self.mapping).get(param)
+        dtype = self.mapping.get(param)
+        platform = request.GET.get(self.PARAM_NAME + '_platform', '')
         if dtype is not None:
             logger.debug('device manually set to %s' % dtype.__name__)
-        return Device(request.environ.get('HTTP_USER_AGENT'), dtype)
+            return Device(request.environ.get('HTTP_USER_AGENT'),
+                dtype, platform)
+        return None
 
     def device_from_user_agent(self, request):
         ua = request.environ.get('HTTP_USER_AGENT', '')
@@ -106,7 +114,7 @@ class PlaymobileDeviceMiddleware(object):
         return device
 
     def set_device_on_cookie(self, response, device):
-        type_val = dict(self.reverse_mapping).get(device.get_type(),
+        type_val = self.reverse_mapping.get(device.get_type(),
             'basic')
         data = {'type': type_val, 'platform': device.get_platform()}
         encdata = response.request.cookies.get(self.PARAM_NAME)
