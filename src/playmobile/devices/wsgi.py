@@ -24,7 +24,7 @@ def deserialize_cookie(data):
 class PlaymobileDeviceMiddleware(object):
     """ The middleware aims at detecting devices type from User agents.
     Once found a cookie is set to cache the result for later queries.
-    
+
     In debugging mode the GET parameter "PARAM_NAME" can be manually set
     to simulate device detection. It can then be disabled by setting it to
     "off".
@@ -45,11 +45,12 @@ class PlaymobileDeviceMiddleware(object):
     mapping = dict(_mapping)
     reverse_mapping = dict(map(lambda (a,b,): (b,a,), _mapping))
 
-    def __init__(self, app, debug=False):
+    def __init__(self, app, debug=False, cookie_max_age=0):
         self.debug = debug
         if self.debug:
             logger.info('PlaymobileDeviceMiddleware start in debug mode.')
         self.app = app
+        self.set_cookie_max_age(int(cookie_max_age))
         self.classifiers = [MITClassifier(), WurflClassifier()]
 
     def __call__(self, environ, start_response):
@@ -72,6 +73,12 @@ class PlaymobileDeviceMiddleware(object):
         start_response(response.status,
             [a for a in response.headers.iteritems()])
         return response.app_iter
+
+    def set_cookie_max_age(self, max_age):
+        if max_age <= 0:
+            self._cookie_max_age = None
+        else:
+            self._cookie_max_age = max_age
 
     def set_device_on_request(self, request, device):
         dtype = device.get_type() or IBasicDeviceType
@@ -121,8 +128,9 @@ class PlaymobileDeviceMiddleware(object):
         if encdata is None or \
                 deserialize_cookie(encdata) != data:
             response.set_cookie(self.PARAM_NAME,
-                serialize_cookie(data),
-                max_age=10000000, path='/', secure=False)
+                                serialize_cookie(data),
+                                max_age=self._cookie_max_age,
+                                path='/', secure=False)
 
     def _get_device(self, ua):
         for classifier in self.classifiers:
