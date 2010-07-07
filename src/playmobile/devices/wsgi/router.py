@@ -32,7 +32,10 @@ class RouterMiddleware(object):
         return config
 
     def __call__(self, environ, start_response):
-        hostname, port = environ.get('HTTP_HOST').split(':')
+        port = 80
+        hostname = environ.get('HTTP_HOST', '')
+        if ":" in hostname:
+            hostname, port = hostname.split(':', 1)
 
         # nothing configure for this host bail out
         if hostname not in self._config:
