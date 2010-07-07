@@ -143,7 +143,9 @@ def device_middleware_filter_factory(global_conf, **local_conf):
     def filter(app):
         debug = global_conf.get('debug', False) or \
             local_conf.get('debug', False)
-        return PlaymobileDeviceMiddleware(app, debug)
+        cookie_max_age = int(local_conf.get('cookie_max_age', 0))
+        return PlaymobileDeviceMiddleware(app,
+                                          debug=debug,
+                                          cookie_max_age=cookie_max_age)
     return filter
-
 
