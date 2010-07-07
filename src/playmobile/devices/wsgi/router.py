@@ -50,8 +50,7 @@ class RouterMiddleware(object):
                 response = request.get_response(self.app)
                 if not no_redirect_cookie:
                     response.set_cookie(
-                        self.no_redirect_param_name, 'on',
-                        path="/", secure="False")
+                        self.no_redirect_param_name, 'on', path="/")
                 return response(environ, start_response)
 
             target = self._config[hostname]

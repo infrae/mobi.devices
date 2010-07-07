@@ -50,7 +50,7 @@ and add a cookie for future requests.
 >>> request.environ['HTTP_HOST'] = 'infrae.com:80'
 >>> request.environ['playmobile.devices.is_mobile'] = 'yes'
 >>> request.call_application(stack)
-('200 Ok', [('Content-Type', 'text/plain'), ('Set-Cookie', '__no_redirect=on; Path=/; secure')], ['hello!'])
+('200 Ok', [('Content-Type', 'text/plain'), ('Set-Cookie', '__no_redirect=on; Path=/')], ['hello!'])
 
 The future requests to the site with the cookie will not redirect.
 
