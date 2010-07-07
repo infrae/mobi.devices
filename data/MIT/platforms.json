@@ -9,5 +9,6 @@
     "blackberry": "BlackBerry", 
     "featurephone": "Other Phone", 
     "android": "Android", 
-    "iphone": "iPhone"
+    "iphone": "iPhone",
+    "mobilelinux": "linux based phone (Maemo,...)"
 }
