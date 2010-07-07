@@ -63,6 +63,6 @@ class RouterMiddleware(object):
 # paste deploy entry point
 def router_middleware_filter_factory(global_conf, **local_conf):
     def filter(app):
-        RouterMiddleWare(app, local_conf)
+        return RouterMiddleware(app, local_conf)
 
     return filter
