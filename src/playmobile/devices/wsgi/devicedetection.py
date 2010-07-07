@@ -82,12 +82,18 @@ class PlaymobileDeviceMiddleware(object):
 
     def set_device_on_request(self, request, device):
         dtype = device.get_type() or IBasicDeviceType
+        platform = device.get_platform() or 'computer'
+
         request.environ['playmobile.devices.type'] = \
             self.reverse_mapping[dtype]
         request.environ['playmobile.devices.marker'] = dtype
         request.environ['playmobile.devices.marker_name'] = dtype.__name__
-        request.environ['playmobile.devices.platform'] = \
-            device.get_platform()
+        request.environ['playmobile.devices.platform'] = platform
+        if self._is_mobile(platform):
+            request.environ['playmobile.devices.is_mobile'] = 'yes'
+
+    def _is_mobile(self, platform):
+        return platform not in ('computer', 'spider',)
 
     def device_from_cookie(self, request):
         data = request.cookies.get(self.PARAM_NAME, None)

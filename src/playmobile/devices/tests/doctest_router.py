@@ -8,7 +8,7 @@ ex: infrae.com => m.infrae.com
 
 It has to be below device detection middleware in the wsgy stack.
 
->>> from playmobile.devices.router import RouterMiddleware
+>>> from playmobile.devices.wsgi.router import RouterMiddleware
 >>> app = TestApp()
 >>> stack = RouterMiddleware(app, {'infrae.com': 'm.infrae.com'})
 

@@ -1,8 +1,10 @@
 """
     The TestApp is wrapped into the middleware.
 
-    >>> from playmobile.devices.wsgi import PlaymobileDeviceMiddleware
-    >>> from playmobile.devices.wsgi import serialize_cookie, deserialize_cookie
+    >>> from playmobile.devices.wsgi.devicedetection\\
+    ...   import PlaymobileDeviceMiddleware
+    >>> from playmobile.devices.wsgi.devicedetection\\
+    ...   import serialize_cookie, deserialize_cookie
 
     >>> app = TestApp()
     >>> wrapped = PlaymobileDeviceMiddleware(app)

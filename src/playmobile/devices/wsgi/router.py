@@ -1,4 +1,8 @@
 from webob import Request, Response
+import logging
+
+
+logger = logging.getLogger('playmobile.devices.wsgi.router')
 
 
 class RouterMiddleware(object):
@@ -14,6 +18,8 @@ class RouterMiddleware(object):
     def __init__(self, app, config_map):
         self.app = app
         self._config = self._parse_config(config_map)
+        logger.info("playmobile.devices router config :\n %s" %
+                    str(self._config))
 
     def _parse_config(self, config_map):
         config = {}
@@ -55,3 +61,9 @@ class RouterMiddleware(object):
         return self.app(environ, start_response)
 
 
+# paste deploy entry point
+def router_middleware_filter_factory(global_conf, **local_conf):
+    def filter(app):
+        RouterMiddleWare(app, local_conf)
+
+    return filter

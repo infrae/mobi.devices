@@ -23,7 +23,10 @@ setup(name='playmobile.devices',
       test_suite='nose.collector',
       entry_points = {
         'paste.filter_factory': [
-            'classifier = playmobile.devices.wsgi:device_middleware_filter_factory',
-        ],
-      },
-     )
+            'classifier = '
+              'playmobile.devices.wsgi.devicedetection:'
+              'device_middleware_filter_factory',
+            'router = '
+              'playmobile.devices.wsgi.router:'
+              'router_middleware_filter_factory']}
+      )
