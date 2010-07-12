@@ -16,14 +16,17 @@ setup(name='playmobile.devices',
         'zope.interface',
         'playmobile.interfaces',
         'playmobile.caching',
-        'pywurfl',
+        'pywurfl>=7.0.0',
         'nose',
         'webob'
       ],
       test_suite='nose.collector',
       entry_points = {
         'paste.filter_factory': [
-            'classifier = playmobile.devices.wsgi:device_middleware_filter_factory',
-        ],
-      },
-     )
+            'classifier = '
+              'playmobile.devices.wsgi.devicedetection:'
+              'device_middleware_filter_factory',
+            'router = '
+              'playmobile.devices.wsgi.router:'
+              'router_middleware_filter_factory']}
+      )

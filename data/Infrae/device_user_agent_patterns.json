@@ -5,5 +5,12 @@
         "description": "Simulator for the iPhone",
         "device_type": "Webkit",
         "platform": "iphone"
+    },
+    {
+        "pattern": "/Firefox\\/.*? Maemo Browser/",
+        "certs": 0,
+        "description": "Firefox mobile web browser",
+        "device_type": "Webkit",
+        "platform": "linuxmobile"
     }
 ]

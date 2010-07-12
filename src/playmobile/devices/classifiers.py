@@ -3,10 +3,11 @@ from zope.interface import implements
 from playmobile.interfaces.devices import (IDevice, IClassifier,
     IStandardDeviceType, IAdvancedDeviceType, IBasicDeviceType)
 from playmobile.devices.wurfl import devices
-from pywurfl.algorithms import JaroWinkler
+from pywurfl.algorithms import JaroWinkler, LevenshteinDistance
 from pywurfl.exceptions import DeviceNotFound
 
-from playmobile.devices.device import Device, WDevice
+from playmobile.devices.device import MITDevice, WDevice
+from playmobile.devices import DATA_DIR
 
 import os, re
 
@@ -24,17 +25,19 @@ except ImportError:
 class WurflClassifier(object):
     implements(IClassifier)
 
-    def __init__(self, user_agent):
-        self.user_agent = user_agent
+    def __init__(self, accuracy=0.7, weight=0.01):
+        self.accuracy = accuracy
+        self.weight = weight
 
-    def __call__(self):
+    def __call__(self, user_agent):
         try:
             logger.debug("Lookup the user agent against wurfl db.")
             wurfl_device = \
-                devices.select_ua(self.user_agent,
-                    search=JaroWinkler(accuracy=0.85))
+                devices.select_ua(unicode(user_agent),
+                    search=JaroWinkler(accuracy=self.accuracy,
+                        weight=self.weight))
             # logger.debug("Device found: %s" % wurfl_device)
-            return WDevice(wurfl_device)
+            return WDevice(unicode(user_agent), wurfl_device)
         # this is bad but a weird but makes DeviceNotFound not catched if
         # except DeviceNotFound is used
         except Exception, e:
@@ -60,8 +63,8 @@ class RegexMatcher(object):
 class MITUAPatternMatcher(object):
 
     pattern_file_paths = [
-        '../../../data/MIT/device_user_agent_patterns.json',
-        '../../../data/Infrae/device_user_agent_patterns.json',
+        'MIT/device_user_agent_patterns.json',
+        'Infrae/device_user_agent_patterns.json',
     ]
 
     def __init__(self):
@@ -70,7 +73,7 @@ class MITUAPatternMatcher(object):
     def load_patterns(self):
         self.__patterns = []
         for path in self.pattern_file_paths:
-            filepath = os.path.join(os.path.dirname(__file__), path)
+            filepath = os.path.join(DATA_DIR, path)
             fd = open(filepath, 'r')
             try:
                 data = json.load(fd)
@@ -103,38 +106,27 @@ class MITUAPatternMatcher(object):
         return StringMatcher(pattern_string)
 
 
-mit_matcher = MITUAPatternMatcher()
-mit_matcher.load_patterns()
-
-
 class MITClassifier(object):
     implements(IClassifier)
 
-    patterns = mit_matcher
+    def __init__(self):
+        self.patterns = MITUAPatternMatcher()
+        self.patterns.load_patterns()
 
-    def __init__(self, user_agent):
-        self.user_agent = user_agent
-
-    def __call__(self):
-        device_infos = self.patterns.lookup(self.user_agent)
+    def __call__(self, user_agent):
+        device_infos = self.patterns.lookup(user_agent)
         if device_infos is None:
             return None
-
-        device_type = device_infos['device_type']
-        if device_type == 'Webkit':
-            return Device(IAdvancedDeviceType)
-        elif device_type == 'Touch':
-            return Device(IStandardDeviceType)
-        else:
-            return Device(IBasicDeviceType)
+        return MITDevice(unicode(user_agent), device_infos)
 
 
+# USE FOR TEST PURPOSE ONLY
 def get_device(ua):
-    device = MITClassifier(ua)()
+    device = MITClassifier()(ua)
     if device is None:
-        device = WurflClassifier(ua)()
+        device = WurflClassifier()(ua)
     if device is None:
-        device = Device(IBasicDeviceType)
+        device = Device(unicode(ua), IBasicDeviceType)
     return device
 
 

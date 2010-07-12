@@ -12,7 +12,7 @@
         "description": "iPhone", 
         "device_type": "Webkit", 
         "platform": "iphone"
-    },
+    }, 
     {
         "pattern": "iPod", 
         "certs": 1, 
@@ -364,7 +364,7 @@
         "platform": "spider"
     }, 
     {
-        "pattern": "/MSIE|Firefox|Safari/", 
+        "pattern": "/MSIE|Safari/", 
         "certs": 1, 
         "description": "Browsers", 
         "device_type": "Basic", 

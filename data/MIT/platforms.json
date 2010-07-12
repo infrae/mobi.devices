@@ -1,0 +1,14 @@
+{
+    "computer": "Computer", 
+    "palmos": "PalmOS", 
+    "webos": "webOS", 
+    "spider": "Spider", 
+    "symbian": "Symbian", 
+    "maemo": "Maemo", 
+    "winmo": "Windows Mobile", 
+    "blackberry": "BlackBerry", 
+    "featurephone": "Other Phone", 
+    "android": "Android", 
+    "iphone": "iPhone",
+    "mobilelinux": "linux based phone (Maemo,...)"
+}
