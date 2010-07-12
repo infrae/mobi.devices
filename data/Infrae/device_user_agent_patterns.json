@@ -12,5 +12,12 @@
         "description": "Firefox mobile web browser",
         "device_type": "Webkit",
         "platform": "linuxmobile"
+    },
+    {
+        "pattern": "Fennec",
+        "certs": 0,
+        "description": "Firefox mobile web browser",
+        "device_type": "Webkit",
+        "platform": "linuxmobile"
     }
 ]
