@@ -8,16 +8,23 @@
     },
     {
         "pattern": "/Firefox\\/.*? Maemo Browser/",
-        "certs": 0,
+        "certs": 1,
         "description": "Firefox mobile web browser",
         "device_type": "Webkit",
         "platform": "linuxmobile"
     },
     {
         "pattern": "Fennec",
-        "certs": 0,
+        "certs": 1,
         "description": "Firefox mobile web browser",
         "device_type": "Webkit",
         "platform": "linuxmobile"
+    },
+    {
+        "pattern": "iPad",
+        "certs": 1,
+        "description": "Apple's iPad",
+        "device_type": "Webkit",
+        "platform": "iphone"
     }
 ]

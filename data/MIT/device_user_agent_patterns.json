@@ -364,7 +364,7 @@
         "platform": "spider"
     }, 
     {
-        "pattern": "/MSIE|Safari/", 
+        "pattern": "MSIE", 
         "certs": 1, 
         "description": "Browsers", 
         "device_type": "Basic", 
