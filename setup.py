@@ -3,7 +3,7 @@
 import os
 from setuptools import setup, find_packages
 
-VERSION='1.0dev'
+VERSION='1.0b1'
 
 setup(name='mobi.devices',
       version=VERSION,
