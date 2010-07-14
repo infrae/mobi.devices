@@ -1,8 +1,8 @@
 from zope.interface import implements
-from playmobile.interfaces.devices import (IDevice,
+from mobi.interfaces.devices import (IDevice,
     IStandardDeviceType, IAdvancedDeviceType, IBasicDeviceType)
-from playmobile.devices import PLATFORMS
-from playmobile.devices.wurfl import devices as wdevices
+from mobi.devices import PLATFORMS
+from mobi.devices.wurfl import devices as wdevices
 
 class Device(object):
     implements(IDevice)

@@ -1,9 +1,9 @@
 from webob import Request
 
-from playmobile.devices.classifiers import MITClassifier, WurflClassifier
-from playmobile.devices.device import Device
-from playmobile.caching import Cache
-from playmobile.interfaces.devices import (
+from mobi.devices.classifiers import MITClassifier, WurflClassifier
+from mobi.devices.device import Device
+from mobi.caching import Cache
+from mobi.interfaces.devices import (
     IBasicDeviceType, IStandardDeviceType, IAdvancedDeviceType)
 
 
@@ -11,7 +11,7 @@ import logging
 import base64
 import json
 
-logger = logging.getLogger('playmobile.devices.wsgi')
+logger = logging.getLogger('mobi.devices.wsgi')
 
 _marker = object()
 
@@ -21,7 +21,7 @@ def serialize_cookie(data):
 def deserialize_cookie(data):
     return json.loads(base64.b64decode(data) or '{}')
 
-class PlaymobileDeviceMiddleware(object):
+class MobiDeviceMiddleware(object):
     """ The middleware aims at detecting devices type from User agents.
     Once found a cookie is set to cache the result for later queries.
 
@@ -48,7 +48,7 @@ class PlaymobileDeviceMiddleware(object):
     def __init__(self, app, debug=False, cookie_max_age=0):
         self.debug = debug
         if self.debug:
-            logger.info('PlaymobileDeviceMiddleware start in debug mode.')
+            logger.info('MobiDeviceMiddleware start in debug mode.')
         self.app = app
         self.set_cookie_max_age(int(cookie_max_age))
         self.classifiers = [MITClassifier(), WurflClassifier()]
@@ -84,13 +84,13 @@ class PlaymobileDeviceMiddleware(object):
         dtype = device.get_type() or IBasicDeviceType
         platform = device.get_platform() or 'computer'
 
-        request.environ['playmobile.devices.type'] = \
+        request.environ['mobi.devices.type'] = \
             self.reverse_mapping[dtype]
-        request.environ['playmobile.devices.marker'] = dtype
-        request.environ['playmobile.devices.marker_name'] = dtype.__name__
-        request.environ['playmobile.devices.platform'] = platform
+        request.environ['mobi.devices.marker'] = dtype
+        request.environ['mobi.devices.marker_name'] = dtype.__name__
+        request.environ['mobi.devices.platform'] = platform
         if self._is_mobile(platform):
-            request.environ['playmobile.devices.is_mobile'] = 'yes'
+            request.environ['mobi.devices.is_mobile'] = 'yes'
 
     def _is_mobile(self, platform):
         return platform not in ('computer', 'spider',)
@@ -150,7 +150,7 @@ def device_middleware_filter_factory(global_conf, **local_conf):
         debug = global_conf.get('debug', False) or \
             local_conf.get('debug', False)
         cookie_max_age = int(local_conf.get('cookie_max_age', 0))
-        return PlaymobileDeviceMiddleware(app,
+        return MobiDeviceMiddleware(app,
                                           debug=debug,
                                           cookie_max_age=cookie_max_age)
     return filter

@@ -1,19 +1,19 @@
 from zope.interface import implements
 
-from playmobile.interfaces.devices import (IDevice, IClassifier,
+from mobi.interfaces.devices import (IDevice, IClassifier,
     IStandardDeviceType, IAdvancedDeviceType, IBasicDeviceType)
-from playmobile.devices.wurfl import devices
+from mobi.devices.wurfl import devices
 from pywurfl.algorithms import JaroWinkler, LevenshteinDistance
 from pywurfl.exceptions import DeviceNotFound
 
-from playmobile.devices.device import MITDevice, WDevice
-from playmobile.devices import DATA_DIR
+from mobi.devices.device import MITDevice, WDevice
+from mobi.devices import DATA_DIR
 
 import os, re
 
 
 import logging
-logger = logging.getLogger('playmobile.devices.classifiers')
+logger = logging.getLogger('mobi.devices.classifiers')
 
 try:
     # Python 2.6

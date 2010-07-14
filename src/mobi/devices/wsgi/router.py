@@ -2,7 +2,7 @@ from webob import Request, Response
 import logging
 
 
-logger = logging.getLogger('playmobile.devices.wsgi.router')
+logger = logging.getLogger('mobi.devices.wsgi.router')
 
 
 class RouterMiddleware(object):
@@ -18,7 +18,7 @@ class RouterMiddleware(object):
     def __init__(self, app, config_map):
         self.app = app
         self._config = self._parse_config(config_map)
-        logger.info("playmobile.devices router config :\n %s" %
+        logger.info("mobi.devices router config :\n %s" %
                     str(self._config))
 
     def _parse_config(self, config_map):
@@ -47,8 +47,8 @@ class RouterMiddleware(object):
 
         force_no_redirect = no_redirect_param or no_redirect_cookie
 
-        # playmobile.devices middleware has tagged it as mobile
-        if request.environ.get('playmobile.devices.is_mobile'):
+        # mobi.devices middleware has tagged it as mobile
+        if request.environ.get('mobi.devices.is_mobile'):
             if force_no_redirect:
                 response = request.get_response(self.app)
                 if not no_redirect_cookie:

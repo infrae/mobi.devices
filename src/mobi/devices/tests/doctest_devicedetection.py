@@ -1,13 +1,13 @@
 """
     The TestApp is wrapped into the middleware.
 
-    >>> from playmobile.devices.wsgi.devicedetection\\
-    ...   import PlaymobileDeviceMiddleware
-    >>> from playmobile.devices.wsgi.devicedetection\\
+    >>> from mobi.devices.wsgi.devicedetection\\
+    ...   import MobiDeviceMiddleware
+    >>> from mobi.devices.wsgi.devicedetection\\
     ...   import serialize_cookie, deserialize_cookie
 
     >>> app = TestApp()
-    >>> wrapped = PlaymobileDeviceMiddleware(app)
+    >>> wrapped = MobiDeviceMiddleware(app)
 
     The environment is set with an user agent string.
 
@@ -21,10 +21,10 @@
 
     Now we can check that the environment contains some info about the device.
 
-    >>> app.environ['playmobile.devices.marker_name']
+    >>> app.environ['mobi.devices.marker_name']
     'IBasicDeviceType'
-    >>> app.environ['playmobile.devices.marker']
-    <InterfaceClass playmobile.interfaces.devices.IBasicDeviceType>
+    >>> app.environ['mobi.devices.marker']
+    <InterfaceClass mobi.interfaces.devices.IBasicDeviceType>
 
     >>> request = Request.blank('/')
     >>> request.environ['HTTP_USER_AGENT'] = "Mozilla/5.0 (iPhone" \\
@@ -33,10 +33,10 @@
     ...     " Mobile/7E18 Safari/528.16"
     >>> request.call_application(wrapped) #doctest: +ELLIPSIS
     ('200 Ok..., ['hello!'])
-    >>> app.environ['playmobile.devices.marker_name']
+    >>> app.environ['mobi.devices.marker_name']
     'IAdvancedDeviceType'
-    >>> app.environ['playmobile.devices.marker']
-    <InterfaceClass playmobile.interfaces.devices.IAdvancedDeviceType>
+    >>> app.environ['mobi.devices.marker']
+    <InterfaceClass mobi.interfaces.devices.IAdvancedDeviceType>
 
     When the response returns the middle sets a cookie to cache the result
     on the client side.
@@ -61,11 +61,11 @@
     >>> response = request.get_response(wrapped)
     >>> response.headers.get('Set-Cookie', None) is None
     True
-    >>> app.environ['playmobile.devices.marker_name']
+    >>> app.environ['mobi.devices.marker_name']
     'IAdvancedDeviceType'
-    >>> app.environ['playmobile.devices.marker']
-    <InterfaceClass playmobile.interfaces.devices.IAdvancedDeviceType>
-    >>> app.environ['playmobile.devices.platform']
+    >>> app.environ['mobi.devices.marker']
+    <InterfaceClass mobi.interfaces.devices.IAdvancedDeviceType>
+    >>> app.environ['mobi.devices.platform']
     u'spider'
 """
 
