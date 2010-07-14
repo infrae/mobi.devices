@@ -20,7 +20,7 @@ setup(name='mobi.devices',
         'mobi.interfaces',
         'mobi.caching',
         'pywurfl>=7.0.0',
-        'webob'
+        'webob',
       ],
       tests_requires=[
         'nose',
