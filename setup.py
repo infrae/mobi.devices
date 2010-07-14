@@ -3,10 +3,11 @@
 import os
 from setuptools import setup, find_packages
 
-print find_packages('src')
+VERSION='1.0dev'
 
 setup(name='mobi.devices',
-      version='0.1dev',
+      version=VERSION,
+      dependency_links=['http://dist.infrae.com/thirdparty'],
       description='Mobile Device management',
       long_description=open("README.txt").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
@@ -14,15 +15,15 @@ setup(name='mobi.devices',
       author_email='info@infrae.com',
       url='infrae.com',
       package_dir={'': 'src'},
-      package_data={'mobi.devices': ['data']},
       packages=find_packages('src'),
       namespace_packages=['mobi'],
       install_requires=[
-        'zope.interface',
-        'mobi.interfaces',
         'mobi.caching',
+        'mobi.interfaces',
+        'python-Levenshtein',
         'pywurfl>=7.0.0',
         'webob',
+        'zope.interface',
       ],
       test_requires=[
         'nose',
