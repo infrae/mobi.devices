@@ -8,6 +8,8 @@ print find_packages('src')
 setup(name='mobi.devices',
       version='0.1dev',
       description='Mobile Device management',
+      long_description=open("README.txt").read() + "\n" +
+                       open(os.path.join("docs", "HISTORY.txt")).read(),
       author='Infrae',
       author_email='info@infrae.com',
       url='infrae.com',
@@ -22,7 +24,7 @@ setup(name='mobi.devices',
         'pywurfl>=7.0.0',
         'webob',
       ],
-      tests_requires=[
+      test_requires=[
         'nose',
       ],
       test_suite='nose.collector',
