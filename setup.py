@@ -3,6 +3,8 @@
 import os
 from setuptools import setup, find_packages
 
+print find_packages('src')
+
 setup(name='mobi.devices',
       version='0.1dev',
       description='Mobile Device management',
@@ -10,6 +12,7 @@ setup(name='mobi.devices',
       author_email='info@infrae.com',
       url='infrae.com',
       package_dir={'': 'src'},
+      package_data={'mobi.devices': ['data']},
       packages=find_packages('src'),
       namespace_packages=['mobi'],
       install_requires=[
@@ -17,8 +20,10 @@ setup(name='mobi.devices',
         'mobi.interfaces',
         'mobi.caching',
         'pywurfl>=7.0.0',
-        'nose',
         'webob'
+      ],
+      tests_requires=[
+        'nose',
       ],
       test_suite='nose.collector',
       entry_points = {

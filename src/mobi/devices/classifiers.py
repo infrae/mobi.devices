@@ -1,10 +1,8 @@
 from zope.interface import implements
 
-from mobi.interfaces.devices import (IDevice, IClassifier,
-    IStandardDeviceType, IAdvancedDeviceType, IBasicDeviceType)
+from mobi.interfaces.devices import IClassifier, IBasicDeviceType
 from mobi.devices.wurfl import devices
-from pywurfl.algorithms import JaroWinkler, LevenshteinDistance
-from pywurfl.exceptions import DeviceNotFound
+from pywurfl.algorithms import JaroWinkler
 
 from mobi.devices.device import MITDevice, WDevice
 from mobi.devices import DATA_DIR
