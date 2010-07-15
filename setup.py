@@ -5,6 +5,8 @@ from setuptools import setup, find_packages
 
 VERSION='1.0b1'
 
+test_requires = ['nose',]
+
 setup(name='mobi.devices',
       version=VERSION,
       dependency_links=['http://dist.infrae.com/thirdparty'],
@@ -13,6 +15,7 @@ setup(name='mobi.devices',
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       author='Infrae',
       author_email='info@infrae.com',
+      license="BSD",
       url='infrae.com',
       package_dir={'': 'src'},
       packages=find_packages('src'),
@@ -25,9 +28,8 @@ setup(name='mobi.devices',
         'webob',
         'zope.interface',
       ],
-      test_requires=[
-        'nose',
-      ],
+      test_requires=test_requires,
+      extras_requires={'test': test_requires},
       test_suite='nose.collector',
       entry_points = {
         'paste.filter_factory': [
