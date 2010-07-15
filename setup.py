@@ -4,19 +4,18 @@ import os
 from setuptools import setup, find_packages
 
 VERSION='1.0b1'
-
-test_requires = ['nose',]
+tests_require = ['Nose',]
 
 setup(name='mobi.devices',
       version=VERSION,
       dependency_links=['http://dist.infrae.com/thirdparty'],
-      description='Mobile Device management',
+      description='Mobile Device detection',
       long_description=open("README.txt").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
-      author='Infrae',
+      author='Antonin Amand',
       author_email='info@infrae.com',
       license="BSD",
-      url='infrae.com',
+      url='http://infrae.com/',
       package_dir={'': 'src'},
       packages=find_packages('src'),
       namespace_packages=['mobi'],
@@ -28,8 +27,8 @@ setup(name='mobi.devices',
         'webob',
         'zope.interface',
       ],
-      test_requires=test_requires,
-      extras_requires={'test': test_requires},
+      tests_require=tests_require,
+      extras_require={'test': tests_require},
       test_suite='nose.collector',
       entry_points = {
         'paste.filter_factory': [
