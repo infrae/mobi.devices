@@ -9,6 +9,7 @@ It uses `WURFL database <http://wurfl.sourceforce.net>`_ as well as data from
 It also provides wsgi middlewares that can tag the request with some information
 about the devices performing the request.
 
-Run the tests :
+Run the tests ::
 
-python setup.py nosetests
+    python setup.py nosetests
+
