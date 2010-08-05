@@ -10,5 +10,5 @@
     "featurephone": "Other Phone", 
     "android": "Android", 
     "iphone": "iPhone",
-    "mobilelinux": "linux based phone (Maemo,...)"
+    "linuxmobile": "linux based phone (Maemo,...)"
 }
