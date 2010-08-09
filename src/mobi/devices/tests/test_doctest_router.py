@@ -75,3 +75,10 @@ class TestApp(object):
         return ['hello!']
 
 
+def test_suite():
+    import unittest
+    import doctest
+
+    suite = unittest.TestSuite()
+    suite.addTest(doctest.DocTestSuite(__name__))
+    return suite

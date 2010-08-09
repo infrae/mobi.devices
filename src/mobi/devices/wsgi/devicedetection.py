@@ -2,10 +2,11 @@ from webob import Request
 
 from mobi.devices.classifiers import MITClassifier, WurflClassifier
 from mobi.devices.device import Device
-from mobi.caching import Cache
 from mobi.interfaces.devices import (
     IBasicDeviceType, IStandardDeviceType, IAdvancedDeviceType)
 
+from beaker.cache import CacheManager
+from beaker.util import parse_cache_config_options
 
 import logging
 import base64
@@ -30,10 +31,6 @@ class MobiDeviceMiddleware(object):
     "off".
     """
 
-    cache_engine = Cache(
-        namespace=__module__)
-    cache = cache_engine.cache
-
     PARAM_NAME = '__devinfo'
 
     _mapping = [
@@ -42,11 +39,27 @@ class MobiDeviceMiddleware(object):
         ('basic', IBasicDeviceType),
     ]
 
+    DEFAULT_CACHE_OPTIONS = {
+        'cache.type': 'memorylru',
+        'cache.lock_dir': '/tmp',
+        'cache.max_items': 1000,
+    }
+
     mapping = dict(_mapping)
     reverse_mapping = dict(map(lambda (a,b,): (b,a,), _mapping))
 
-    def __init__(self, app, debug=False, cookie_max_age=0):
+    def __init__(self, app,
+                 cookie_cache=True,
+                 cache_opts=None,
+                 debug=False,
+                 cookie_max_age=0):
         self.debug = debug
+        self.cookie_cache = cookie_cache
+        cache_manager = CacheManager(
+            **parse_cache_config_options(cache_opts or
+                                         self.DEFAULT_CACHE_OPTIONS))
+        self.cache = cache_manager.get_cache('mobi.devices')
+
         if self.debug:
             logger.info('MobiDeviceMiddleware start in debug mode.')
         self.app = app
@@ -65,7 +78,7 @@ class MobiDeviceMiddleware(object):
         response = request.get_response(self.app)
 
         logger.info('device: %s - %s' %
-            (device.get_type(), device.get_platform(),))
+            (device.type, device.platform))
 
         if device is not None:
             self.set_device_on_cookie(response, device)
@@ -81,8 +94,8 @@ class MobiDeviceMiddleware(object):
             self._cookie_max_age = max_age
 
     def set_device_on_request(self, request, device):
-        dtype = device.get_type() or IBasicDeviceType
-        platform = device.get_platform() or 'computer'
+        dtype = device.type or IBasicDeviceType
+        platform = device.platform or 'computer'
 
         request.environ['mobi.devices.type'] = \
             self.reverse_mapping[dtype]
@@ -96,6 +109,8 @@ class MobiDeviceMiddleware(object):
         return platform not in ('computer', 'spider',)
 
     def device_from_cookie(self, request):
+        if not self.cookie_cache:
+            return None
         data = request.cookies.get(self.PARAM_NAME, None)
         if data is not None:
             cookie_val = deserialize_cookie(data)
@@ -115,21 +130,28 @@ class MobiDeviceMiddleware(object):
         dtype = self.mapping.get(param)
         platform = request.GET.get(self.PARAM_NAME + '_platform', '')
         if dtype is not None:
-            logger.debug('device manually set to %s' % dtype.__name__)
+            logger.info('device manually set to %s' % dtype.__name__)
             return Device(request.environ.get('HTTP_USER_AGENT'),
                 dtype, platform)
         return None
 
     def device_from_user_agent(self, request):
         ua = request.environ.get('HTTP_USER_AGENT', '')
-        logger.debug("get device from UserAgent: %s" % ua)
-        device = self.cache('select_ua:%s' % ua, lambda : self._get_device(ua))
+        logger.info("get device from UserAgent: %s" % ua)
+
+        def get_device():
+            return self._get_device(ua)
+
+        device = self.cache.get(key="device_lookup:%s" % ua,
+                                createfunc=get_device)
         return device
 
     def set_device_on_cookie(self, response, device):
-        type_val = self.reverse_mapping.get(device.get_type(),
+        if not self.cookie_cache:
+            return
+        type_val = self.reverse_mapping.get(device.type,
             'basic')
-        data = {'type': type_val, 'platform': device.get_platform()}
+        data = {'type': type_val, 'platform': device.platform}
         encdata = response.request.cookies.get(self.PARAM_NAME)
         if encdata is None or \
                 deserialize_cookie(encdata) != data:
@@ -141,7 +163,8 @@ class MobiDeviceMiddleware(object):
     def _get_device(self, ua):
         for classifier in self.classifiers:
             device = classifier(ua)
-            if device is not None: return device
+            if device is not None:
+                return device
         return Device(ua, IBasicDeviceType)
 
 
@@ -150,8 +173,15 @@ def device_middleware_filter_factory(global_conf, **local_conf):
         debug = global_conf.get('debug', False) or \
             local_conf.get('debug', False)
         cookie_max_age = int(local_conf.get('cookie_max_age', 0))
+        cookie_cache = local_conf.get('cookie_cache', not(debug))
+        cache_options = {}
+        for key, value in local_conf.iteritems():
+            if key.startswith('cache'):
+                cache_options[key] = value
         return MobiDeviceMiddleware(app,
-                                          debug=debug,
-                                          cookie_max_age=cookie_max_age)
+                                    debug=debug,
+                                    cookie_cache=cookie_cache,
+                                    cache_opts=cache_options,
+                                    cookie_max_age=cookie_max_age)
     return filter
 

@@ -4,7 +4,7 @@ import os
 from setuptools import setup, find_packages
 
 VERSION='1.0b1'
-tests_require = ['Nose',]
+tests_require = []
 
 setup(name='mobi.devices',
       version=VERSION,
@@ -20,7 +20,7 @@ setup(name='mobi.devices',
       packages=find_packages('src'),
       namespace_packages=['mobi'],
       install_requires=[
-        'mobi.caching',
+        'infrae.cache',
         'mobi.interfaces',
         'python-Levenshtein',
         'pywurfl>=7.0.0',

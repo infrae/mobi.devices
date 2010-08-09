@@ -29,7 +29,7 @@ class WurflClassifier(object):
 
     def __call__(self, user_agent):
         try:
-            logger.debug("Lookup the user agent against wurfl db.")
+            logger.info("Lookup the user agent against wurfl db.")
             wurfl_device = \
                 devices.select_ua(unicode(user_agent),
                     search=JaroWinkler(accuracy=self.accuracy,
@@ -39,8 +39,9 @@ class WurflClassifier(object):
         # this is bad but a weird but makes DeviceNotFound not catched if
         # except DeviceNotFound is used
         except Exception, e:
-            logger.debug("Error during wurfl lookup :%s" % str(e))
+            logger.info("Error during wurfl lookup :%s" % str(e))
         return None
+
 
 class StringMatcher(object):
     def __init__(self, string):
@@ -86,10 +87,10 @@ class MITUAPatternMatcher(object):
         for dev_info in self.__patterns:
             matcher = dev_info['matcher']
             if matcher(ua):
-                logger.debug("User Agent matched against MIT patterns")
-                logger.debug("Device info : %s" % dev_info)
+                logger.info("User Agent matched against MIT patterns")
+                logger.info("Device info : %s" % dev_info)
                 return dev_info
-        logger.debug("Device lookup failed in MIT db.")
+        logger.info("Device lookup failed in MIT db.")
         return None
 
     def __build_matcher(self, pattern_string):

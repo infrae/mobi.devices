@@ -9,9 +9,9 @@
     >>> device = get_device(ua)
     >>> device # doctest: +ELLIPSIS
     <mobi.devices.device.MITDevice ...>
-    >>> device.get_type()
+    >>> device.type
     <InterfaceClass mobi.interfaces.devices.IBasicDeviceType>
-    >>> device.get_platform()
+    >>> device.platform
     u'symbian'
 
     Let's check the Wurfl classifier with computer devices.
@@ -23,7 +23,7 @@
     >>> device = wclassifier(firefox_ua)
     >>> device  # doctest: +ELLIPSIS
     <mobi.devices.device.WDevice ...>
-    >>> device.get_platform()
+    >>> device.platform
     u'computer'
 
     Let's try with Google spider boot user agent. We would expect spider
@@ -32,7 +32,16 @@
     >>> google_ua = "Mozilla/5.0 (compatible; Googlebot/2.1;" \\
     ...     " +http://www.google.com/bot.html)"
     >>> device = wclassifier(google_ua)
-    >>> device.get_platform()
+    >>> device.platform
     u'computer'
 
 """
+
+def test_suite():
+    import unittest
+    import doctest
+
+    suite = unittest.TestSuite()
+    suite.addTest(doctest.DocTestSuite(__name__))
+    return suite
+

@@ -10,13 +10,8 @@ class Device(object):
     def __init__(self, user_agent, type_, platform=""):
         self.user_agent = user_agent
         self.type = type_
-        self.platform = platform
+        self.platform = unicode(platform)
 
-    def get_type(self):
-        return self.type
-
-    def get_platform(self):
-        return unicode(self.platform)
 
 class MITDevice(object):
     implements(IDevice)
@@ -24,8 +19,10 @@ class MITDevice(object):
     def __init__(self, user_agent, info):
         self.user_agent = user_agent
         self.info = info
+        self.type = self._get_type()
+        self.platform = self._get_platform()
 
-    def get_type(self):
+    def _get_type(self):
         device_type = self.info['device_type']
         if device_type == 'Webkit':
             return IAdvancedDeviceType
@@ -35,7 +32,7 @@ class MITDevice(object):
             return IBasicDeviceType
         return None
 
-    def get_platform(self):
+    def _get_platform(self):
         return unicode(self.info.get('platform', ''))
 
 
@@ -44,44 +41,41 @@ class WDevice(object):
 
     def __init__(self, user_agent, wurfl_device):
         self.user_agent = user_agent
-        self.wurfl_device = wurfl_device
-        self.__device_type = None
+        self.type = self._get_type(wurfl_device)
+        self.platform = self._get_platform(wurfl_device)
 
-    def get_platform(self):
+    def _get_platform(self, wurfl_device):
         platform = None
-        if self.wurfl_device.is_wireless_device:
+        if wurfl_device.is_wireless_device:
             platform_names = PLATFORMS.keys()
-            os = self.wurfl_device.device_os
+            os = wurfl_device.device_os
             for name in platform_names:
                 if name in os:
                     return name
             return u'featurephone'
         else:
-            fallbacks = self._fallback_devices()
+            fallbacks = self._fallback_devices(wurfl_device)
             for fallback in fallbacks:
                 if 'bot' in fallback.devid or \
                         fallback.devid == 'generic_web_crawler':
                     return u'spider'
             return u'computer'
 
-    def _fallback_devices(self):
-        device = self.wurfl_device
+    def _fallback_devices(self, wurfl_device):
+        device = wurfl_device
         fallbacks = []
         while wdevices.devids.has_key(device.fall_back):
             device = wdevices.devids[device.fall_back]
             fallbacks.append(device)
         return fallbacks
 
-    def get_type(self):
-        if self.__device_type:
-            return self.__device_type
-        support_level = int(self.wurfl_device.xhtml_support_level)
+    def _get_type(self, wurfl_device):
+        support_level = int(wurfl_device.xhtml_support_level)
 
-        if support_level == 4:
+        if support_level >= 4:
             return IAdvancedDeviceType
         elif support_level == 3:
             return IStandardDeviceType
         else:
             return IBasicDeviceType
-
 
