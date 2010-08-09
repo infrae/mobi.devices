@@ -26,5 +26,19 @@
         "description": "Apple's iPad",
         "device_type": "Webkit",
         "platform": "iphone"
+    },
+    {
+        "pattern": "/Android.*Chrome/",
+        "certs": 1,
+        "description": "Android Phone",
+        "device_type": "Webkit",
+        "platform": "android"
+    },
+    {
+        "pattern": "Chrome",
+        "certs": 1,
+        "description": "Google Chrome",
+        "device_type": "Webkit",
+        "platform": "computer"
     }
 ]
