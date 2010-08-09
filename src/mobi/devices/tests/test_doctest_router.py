@@ -49,8 +49,9 @@ and add a cookie for future requests.
 >>> request = Request.blank('/?__no_redirect=yes')
 >>> request.environ['HTTP_HOST'] = 'infrae.com:80'
 >>> request.environ['mobi.devices.is_mobile'] = 'yes'
->>> request.call_application(stack)
-('200 Ok', [('Content-Type', 'text/plain'), ('Set-Cookie', '__no_redirect=on; Path=/')], ['hello!'])
+>>> request.call_application(stack) # doctest: +NORMALIZE_WHITESPACE
+('200 Ok', [('Content-Type', 'text/plain'),
+  ('Set-Cookie', '__no_redirect=on; Path=/')], ['hello!'])
 
 The future requests to the site with the cookie will not redirect.
 
