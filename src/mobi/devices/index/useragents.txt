@@ -1,0 +1,34 @@
+SEC-SGHI320/1.0 jBrowser/4.0 Profile/MIDP-2.0 Configuration/CLDC-1.1
+SavaJeOS_EAR3/jBrowser1.0
+jBrowser
+jBrowser-Desktop
+jBrowser-J2ME
+jBrowser/J2ME Profile/MIDP-1.0 Configuration/CLDC-1.0
+jBrowser-WAP
+jBrowser-WAP (PPC)
+jBrowser-WAP/1.0.1
+jBrowser-WAP/1.0.4
+jBrowser-WAP/1.0.5
+jBrowser-WAP/1.0.6
+jBrowser-WAP/1.0.7
+jBrowser-WAP/1.0.8
+jBrowser-WAP 2
+jBrowser-WAP 2.0 (PPC)
+jBrowser-WAP 2.0 (PPC), jBrowser-WAP 2.0 (PPC)
+jBrowser-WAP 3
+jBrowser-WAP 3.0.3
+jBrowser1.0
+jBrowser1.0 , jBrowser1.0
+jBrowser1.0/Savaje1.0
+jBrowser 2.0
+jBrowser2.07-WAP, jBrowser2.07-WAP
+jBrowser 3.0
+jBrowser3.0-PPC
+jBrowser3.0-PPC, jBrowser3.0-PPC
+jBrowser 3.0/Savaje 2.0/1
+jBrowser 3.0/Savaje 2.0/1, jBrowser 3.0/Savaje 2.0/1
+jBrowser/SP/1.0 MIO/8380 Profile/MIDP-1.0 MIDP-2.0 Configuration/CLDC-1.0
+jBrowser/SP/1.0 MIO/8380 Profile/MIDP-1.0 MIDP-2.0 Configuration/CLDC-1.0, jBrowser/SP/1.0 MIO/8380 Profile/MIDP-1.0 MIDP-2.0 Configuration/CLDC-1.0
+jBrowser/SP/1.0 MIO8380/R44 Profile/MIDP-1.0 MIDP-2.0 Configuration/CLDC-1.0
+jBrowser/SP/1.0 MIO8380/R44 Profile/MIDP-1.0 MIDP-2.0 Configuration/CLDC-1.0, jBrowser/SP/1.0 MIO8380/R44 Profile/MIDP-1.0 MIDP-2.0 Configuration/CLDC-1.0
+jBrowser/SP/1.0 MIO8380/R44 Profile/MIDP-1.0 MIDP-2.0 Configuration/CLDC-1.0 (compatible; MSIE 4.01; Windows CE; Smartphone; 176x220)
