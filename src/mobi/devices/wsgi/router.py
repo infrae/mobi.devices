@@ -1,4 +1,4 @@
-from webob import Request, Response
+from webob import Request
 import logging
 
 

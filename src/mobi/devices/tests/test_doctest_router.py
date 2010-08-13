@@ -10,7 +10,8 @@ It has to be below device detection middleware in the wsgy stack.
 
 >>> from mobi.devices.wsgi.router import RouterMiddleware
 >>> app = TestApp()
->>> stack = RouterMiddleware(app, {'infrae.com': 'm.infrae.com'})
+>>> stack = RouterMiddleware(app, {'infrae.com': 'm.infrae.com',
+...     'next.infrae.com': 'm.next.infrae.com'})
 
 With a other host it does nothing.
 
@@ -42,6 +43,14 @@ If it is marked as a mobile devices then it redirects to mobile site.
 >>> request.environ['mobi.devices.is_mobile'] = 'yes'
 >>> request.call_application(stack)
 ('302 Redirect', [('Location', 'http://m.infrae.com/')], [])
+
+it should work for the other host as well.
+
+>>> request = Request.blank('/')
+>>> request.environ['HTTP_HOST'] = 'next.infrae.com:80'
+>>> request.environ['mobi.devices.is_mobile'] = 'yes'
+>>> request.call_application(stack) # doctest: +NORMALIZE_WHITESPACE
+('302 Redirect', [('Location', 'http://m.next.infrae.com/')], [])
 
 We can force no redirect with a GET param and it will prevent from redirecting
 and add a cookie for future requests.
