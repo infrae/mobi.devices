@@ -86,7 +86,7 @@ class Node(object):
             if string.startswith(child.infix):
                 return (child.search(string[len(child.infix):]) or
                            (self.value and self))
-        return None
+        return self.value and self
 
     def add(self, string, value=None):
         if string == '':

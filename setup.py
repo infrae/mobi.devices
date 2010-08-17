@@ -6,6 +6,15 @@ from setuptools import setup, find_packages
 VERSION='1.0b1'
 tests_require = []
 
+
+install_requirements = [
+    'infrae.cache',
+    'mobi.interfaces',
+    'webob',
+    'zope.interface',
+]
+
+
 setup(name='mobi.devices',
       version=VERSION,
       dependency_links=['http://dist.infrae.com/thirdparty'],
@@ -19,14 +28,7 @@ setup(name='mobi.devices',
       package_dir={'': 'src'},
       packages=find_packages('src'),
       namespace_packages=['mobi'],
-      install_requires=[
-        'infrae.cache',
-        'mobi.interfaces',
-        'python-Levenshtein',
-        'pywurfl>=7.0.0',
-        'webob',
-        'zope.interface',
-      ],
+      install_requires=install_requirements,
       include_package_data=True,
       zip_safe=False,
       tests_require=tests_require,

@@ -47,5 +47,12 @@
         "description": "Apple Safari on OS X",
         "device_type": "Webkit",
         "platform": "computer"
+    },
+    {
+        "pattern": "/Firefox/",
+        "certs": 1,
+        "description": "Firefox",
+        "device_type": "Webkit",
+        "platform": "computer"
     }
 ]

@@ -1,10 +1,7 @@
 from zope.interface import implements
 
 from mobi.interfaces.devices import IClassifier, IBasicDeviceType
-from mobi.devices.wurfl import devices
-from pywurfl.algorithms import JaroWinkler
-
-from mobi.devices.device import MITDevice, WDevice
+from mobi.devices.device import MITDevice
 from mobi.devices import DATA_DIR
 
 import os, re
@@ -23,25 +20,11 @@ except ImportError:
 class WurflClassifier(object):
     implements(IClassifier)
 
-    def __init__(self, accuracy=0.7, weight=0.01):
-        self.accuracy = accuracy
-        self.weight = weight
+    def __init__(self):
+        pass
 
     def __call__(self, user_agent):
-        try:
-            logger.info("Lookup the user agent against wurfl db.")
-            wurfl_device = \
-                devices.select_ua(unicode(user_agent),
-                    search=JaroWinkler(accuracy=self.accuracy,
-                        weight=self.weight))
-            # logger.debug("Device found: %s" % wurfl_device)
-            return WDevice(unicode(user_agent), wurfl_device)
-        # this is bad but a weird but makes DeviceNotFound not catched if
-        # except DeviceNotFound is used
-        except Exception, e:
-            logger.info("Error during wurfl lookup :%s" % str(e))
-        return None
-
+        pass
 
 class StringMatcher(object):
     def __init__(self, string):
