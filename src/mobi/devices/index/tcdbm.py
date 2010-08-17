@@ -1,10 +1,16 @@
+"""
+anydbm wrapper for Tokyo Cabinet.
+The implementation is partial, only what's needed for our need as been
+implemented (get/set).
+"""
+
 import pytc as tc
-import os
 
 error = tc.Error
 library = 'Tokyo cabinet'
 
 def open(filename, flag='r', mode=0666):
+    # XXX: implement mode
     rfilename = filename + '.tch'
     tcflags = 0
     if 'c' == flag:
@@ -32,18 +38,8 @@ class TCDBMWrapper(tc.HDB):
         except KeyError:
             return default
 
-    def __delitem__(self, key):
-        return self.out(key)
-
-    def __contains__(self, key):
-        return self.has_key(key)
-
-    def has_key(self, key):
-        return bool(self.get(key, False))
-
     def __getitem__(self, key):
         return super(TCDBMWrapper, self).get(key)
 
     def __setitem__(self, key, value):
         return self.put(key, value)
-
