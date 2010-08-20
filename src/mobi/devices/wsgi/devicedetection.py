@@ -52,7 +52,8 @@ class MobiDeviceMiddleware(object):
                  cookie_cache=True,
                  cache_opts=None,
                  debug=False,
-                 cookie_max_age=0):
+                 cookie_max_age=0,
+                 var='/var/db'):
         self.debug = debug
         self.cookie_cache = cookie_cache
         cache_manager = CacheManager(
@@ -64,7 +65,8 @@ class MobiDeviceMiddleware(object):
             logger.info('MobiDeviceMiddleware start in debug mode.')
         self.app = app
         self.set_cookie_max_age(int(cookie_max_age))
-        self.classifiers = [MITClassifier(), WurflClassifier()]
+        # add config for db
+        self.classifiers = [MITClassifier(), WurflClassifier({'var': var})]
 
     def __call__(self, environ, start_response):
         request = Request(environ)

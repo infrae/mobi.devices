@@ -7,14 +7,19 @@ It should return a tuple (db, index)
     >>> db #doctest: +ELLIPSIS
     <mobi.devices.index.tcdbm.TCDBMWrapper ...>
     >>> index #doctest: +ELLIPSIS
-    <mobi.devices.index.suffixtree.Node ...>
+    <mobi.devices.index.suffixtree.SuffixTree ...>
 
 Now we'll have a look at what's inside the index.
 
     >>> user_agent = 'Mozilla/5.0 (iPhone; ...'
-    >>> dev_id = index.search(user_agent).value
+    >>> node, string, pos = index.search(user_agent)
+    >>> dev_id = node.value
     >>> dev_id
     u'apple_generic'
+    >>> string
+    u'Mozilla/5.0 (iPhone;'
+    >>> pos
+    19
 
 Let's look that up into the database.
 
@@ -31,10 +36,27 @@ Let's look that up into the database.
     >>> device.platform
     u'iphone'
 
+Let's play a bit more with the index.
+
+    >>> from mobi.devices.index.suffixtree import WildcardSearch
+    >>> search = WildcardSearch(index)
+    >>> firefox_ua = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5;" \\
+    ...     " en-US; rv:1.9.1.8) Gecko/20100202 Firefox/3.5.8"
+    >>> results = search(firefox_ua)
+    >>> res = results[0][0]
+    >>> results
+    >>> device = Device.deserialize(db[res.value])
+    >>> device.id
+    ''
+    >>> device.platform
+    'ads'
+    >>> device.get_capability('is_wireless_device')
+    u'false'
 """
 
 import shutil
 import os
+from mobi.devices.wurfl.parser import Device
 
 data_dir = os.path.join(os.path.dirname(__file__), 'var')
 config = {
@@ -50,7 +72,9 @@ def setup(test):
 
 def teardown(test):
     try:
-        shutil.rmtree(data_dir)
+        if Device.db:
+            Device.db.close()
+        #shutil.rmtree(data_dir)
     except:
         pass
 
@@ -62,4 +86,3 @@ def test_suite():
     suite.addTest(
         doctest.DocTestSuite(__name__, setUp=setup, tearDown=teardown))
     return suite
-

@@ -78,15 +78,22 @@ class Node(object):
                 res.extend(child.values())
         return res
 
-    def search(self, string):
-        if string == '' and self.value:
-            return self
+    def search(self, string, buf='', pos=0):
+        if string == '':
+            return self.value and (self, buf + self.infix, pos)
 
         for child in self.children or []:
             if string.startswith(child.infix):
-                return (child.search(string[len(child.infix):]) or
-                           (self.value and self))
-        return self.value and self
+                clen = len(child.infix)
+                match = child.search(string[clen:],
+                                     buf + self.infix,
+                                     pos + len(self.infix))
+                if match:
+                    return match
+                else:
+                    return self.value and (self, buf + self.infix, pos)
+
+        return self.value and (self, buf + self.infix, pos)
 
     def add(self, string, value=None):
         if string == '':
@@ -161,58 +168,25 @@ class Node(object):
                 match_node.value = value or string
 
 
-if __name__ == '__main__':
-    import os
-    import sys
-    import pdb
-    import cProfile
+class SuffixTree(Node):
 
-    path = '/Users/gwik/Work/infrae/silva/2.6-family/trunk/'\
-        'src/mobi.devices/src/mobi/devices/data/WURFL/useragents.txt'
-#     path = '/Users/gwik/Work/infrae/silva/2.6-family/trunk/'\
-#         'src/mobi.devices/src/mobi/devices/index/useragents.txt'
-#    path = '/Users/gwik/Work/infrae/silva/2.6-family/trunk/'\
-#         'src/mobi.devices/src/mobi/devices/index/uaie7.txt'
-    tree = Node('Root')
-
-    with open(path, 'r') as f:
-        line = f.readline().rstrip()
-        while line:
-            tree.add(line, value='')
-            line = f.readline().rstrip()
-
-#            except Exception:
-#                pdb.post_mortem(sys.exc_info()[2])
-    ua = 'Mozilla/5.0 (iPhone; U; CPU'
-    ua = 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; GTB5; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; .NET CLR 3.0.04506'
+    def __init__(self, value=None):
+        super(SuffixTree, self).__init__('', value)
 
 
-    def treesearch():
-        for i in range(1000):
-            tree.search(ua).value
+class WildcardSearch(object):
 
-    import re
-    res = []
+    def __init__(self, node):
+        self.st = node
 
-    with open(path, 'r') as f:
-        line = f.readline().rstrip()
-        while line:
-            tree.add(line, value='')
-            res.append(
-                re.compile('^' + re.escape(f.readline().rstrip()) + '.*'))
-            line = f.readline().rstrip()
-
-    def research():
-        for i in range(1000):
-            match = None
-            for r in res:
-                if re.match(r, ua):
-                    match = r
-
-    cProfile.run('treesearch()', 'tree')
-    cProfile.run('research()', 're')
-
-    import pstats
-    pstats.Stats('tree').print_stats()
-    pstats.Stats('re').print_stats()
-
+    def __call__(self, string):
+        results = []
+        pos = 0
+        l = len(string)
+        while pos < l:
+           r = self.st.search(string[pos:])
+           if r:
+               node, matched_string, spos = r
+               results.append((node, matched_string, pos + spos))
+           pos += 1
+        return results

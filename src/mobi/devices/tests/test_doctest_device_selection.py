@@ -19,7 +19,7 @@
     >>> from mobi.devices.classifiers import WurflClassifier
     >>> firefox_ua = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5;" \\
     ...     " en-US; rv:1.9.1.8) Gecko/20100202 Firefox/3.5.8"
-    >>> wclassifier = WurflClassifier()
+    >>> wclassifier = WurflClassifier(config)
     >>> device = wclassifier(firefox_ua)
     >>> device  # doctest: +ELLIPSIS
     <mobi.devices.device.WDevice ...>
@@ -27,7 +27,7 @@
     u'computer'
 
     Let's try with Google spider boot user agent. We would expect spider
-    platform but it's computer... :/
+    platform but it's computer... :
 
     >>> google_ua = "Mozilla/5.0 (compatible; Googlebot/2.1;" \\
     ...     " +http://www.google.com/bot.html)"
@@ -37,11 +37,35 @@
 
 """
 
+import shutil
+import os
+from mobi.devices.wurfl.parser import Device
+
+data_dir = os.path.join(os.path.dirname(__file__), 'var')
+config = {
+    'var': data_dir
+}
+
+def setup(test):
+    teardown(test)
+    try:
+        os.mkdir(data_dir)
+    except OSError:
+        pass
+
+def teardown(test):
+    try:
+        if Device.db:
+            Device.db.close()
+        shutil.rmtree(data_dir)
+    except:
+        pass
+
 def test_suite():
     import unittest
     import doctest
 
     suite = unittest.TestSuite()
-    suite.addTest(doctest.DocTestSuite(__name__))
+    suite.addTest(
+        doctest.DocTestSuite(__name__, setUp=setup, tearDown=teardown))
     return suite
-

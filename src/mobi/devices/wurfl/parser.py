@@ -2,6 +2,7 @@ from xml.sax.handler import ContentHandler
 from zope.interface import implements
 from mobi.interfaces.devices import (IDevice,
     IBasicDeviceType, IStandardDeviceType, IAdvancedDeviceType)
+from mobi.devices.wurfl.platforms import PLATFORMS
 import cPickle as pickle
 
 
@@ -9,7 +10,6 @@ class Device(object):
     """ A wurfl device object
     """
     implements(IDevice)
-    PLATFORMS = {}
     db = None
 
     # parent resolve method
@@ -23,11 +23,11 @@ class Device(object):
     def deserialize(data):
         return pickle.loads(data)
 
-    def __init__(self, id, user_agent, parent_id=None, caps={}):
+    def __init__(self, id, user_agent, parent_id=None, caps=None):
         self.id = id
         self.parent_id = parent_id
         self.user_agent = user_agent
-        self.capabilities = caps
+        self.capabilities = caps or {}
 
     @property
     def parent(self):
@@ -51,8 +51,8 @@ class Device(object):
             return self.__platform
 
         platform = None
-        if bool(self.get_capability('is_wireless_device')):
-            platform_names = self.PLATFORMS.keys()
+        if self.get_capability('is_wireless_device') == u'true':
+            platform_names = PLATFORMS.keys()
             os = str(self.get_capability('device_os')).lower()
             if os:
                 for name in platform_names:
@@ -110,6 +110,7 @@ class WURFLContentHandler(ContentHandler):
 
     def __init__(self, db, suffix_tree):
         self.db = db
+        self.devices = []
         self.suffix_tree = suffix_tree
 
     def reset(self):
@@ -121,7 +122,8 @@ class WURFLContentHandler(ContentHandler):
     def endDocument(self):
         self.reset()
 
-    def startElement(self, element, attrs):
+    def startElement(self, element, attributes):
+        attrs = attributes.copy()
         if element == 'device':
             self.device = self._build_device(element, attrs)
         if element == 'capability' and self.device:
@@ -130,7 +132,10 @@ class WURFLContentHandler(ContentHandler):
     def endElement(self, element):
         if element == 'device':
             self.db[self.device.id] = self.device.serialize()
-            self.suffix_tree.add(self.device.user_agent, value=self.device.id)
+            if self.device.user_agent:
+                self.suffix_tree.add(self.device.user_agent,
+                                     value=self.device.id)
+            self.devices.append(self.device)
             self.device = None
 
     def _build_device(self, element, attrs):

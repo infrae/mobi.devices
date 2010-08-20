@@ -3,6 +3,8 @@ from zope.interface import implements
 from mobi.interfaces.devices import IClassifier, IBasicDeviceType
 from mobi.devices.device import MITDevice
 from mobi.devices import DATA_DIR
+from mobi.devices.wurfl.db import initialize_db
+from mobi.devices.wurfl.parser import Device as WDevice
 
 import os, re
 
@@ -20,11 +22,14 @@ except ImportError:
 class WurflClassifier(object):
     implements(IClassifier)
 
-    def __init__(self):
-        pass
+    def __init__(self, conf):
+        self.db, self.index = initialize_db(conf)
 
     def __call__(self, user_agent):
-        pass
+        node, string = self.index.search(user_agent)
+        device = WDevice.deserialize(self.db[node.value])
+        return device
+
 
 class StringMatcher(object):
     def __init__(self, string):
@@ -106,9 +111,7 @@ class MITClassifier(object):
 def get_device(ua):
     device = MITClassifier()(ua)
     if device is None:
-        device = WurflClassifier()(ua)
+        device = WurflClassifier(None)(ua)
     if device is None:
         device = Device(unicode(ua), IBasicDeviceType)
     return device
-
-

@@ -7,7 +7,7 @@
     ...   import serialize_cookie, deserialize_cookie
 
     >>> app = TestApp()
-    >>> wrapped = MobiDeviceMiddleware(app)
+    >>> wrapped = MobiDeviceMiddleware(app, var=config['var'])
 
     The environment is set with an user agent string.
 
@@ -81,11 +81,35 @@ class TestApp(object):
         start_response('200 Ok', [('Content-Type', 'text/plain')])
         return ['hello!']
 
+import shutil
+import os
+from mobi.devices.wurfl.parser import Device
+
+data_dir = os.path.join(os.path.dirname(__file__), 'var')
+config = {
+    'var': data_dir
+}
+
+def setup(test):
+    teardown(test)
+    try:
+        os.mkdir(data_dir)
+    except OSError:
+        pass
+
+def teardown(test):
+    try:
+        if Device.db:
+            Device.db.close()
+        shutil.rmtree(data_dir)
+    except:
+        pass
 
 def test_suite():
     import unittest
     import doctest
 
     suite = unittest.TestSuite()
-    suite.addTest(doctest.DocTestSuite(__name__))
+    suite.addTest(
+        doctest.DocTestSuite(__name__, setUp=setup, tearDown=teardown))
     return suite

@@ -1,11 +1,14 @@
 from xml.sax import make_parser
 from mobi.devices.wurfl.parser import Device, WURFLContentHandler
-from mobi.devices.index.suffixtree import Node
+from mobi.devices.index.suffixtree import SuffixTree
+from mutex import mutex
 import pickle
 import gzip
 import logging
 import os
 logger = logging.getLogger('mobi.devices')
+
+db_mutex = mutex()
 
 
 try:
@@ -32,24 +35,27 @@ DEFAULTS = {
 }
 
 def initialize_db(config=None):
-    _config = DEFAULTS.copy()
-    if _config is not None:
-        _config.update(config)
-    if not _config.has_key('var'):
+    local_config = DEFAULTS.copy()
+    if local_config is not None:
+        local_config.update(config)
+    if not local_config.has_key('var'):
         raise ValueError('no storage directory ("var"), defined')
-    dbfilename = os.path.join(config['var'], 'devices')
-    return open_or_create(dbfilename, _config['wurfl_file'])
+    dbfilename = os.path.join(local_config['var'], 'devices')
+    return open_or_create(dbfilename, local_config['wurfl_file'])
 
 def open_or_create(filename, wurfl_file):
-    try:
-        # first try to open it as readonly
-        db = dbm.open(filename, 'r')
+
+    def open_db(mode):
+        db = dbm.open(filename, mode)
         Device.db = db
+        return db
+
+    try:
+        db = open_db('r')
     except:
         logger.info('db does not exists, create it at %s' % filename)
         # open and trunk it
-        db = dbm.open(filename, 'n')
-        Device.db = db
+        db = open_db('n')
         try:
             if not os.path.exists(wurfl_file):
                 raise ValueError('wurfl file does not exists: %s' %
@@ -68,14 +74,13 @@ def open_or_create(filename, wurfl_file):
         finally:
             db.close()
         # reopen database in readonly
-        db = dbm.open(filename, 'r')
-        Device.db = db
+        db = open_db('r')
     return db, pickle.loads(db['__suffixtree__'])
 
 
 def build_index_tree(db, wurfl_xml_stream):
     parser = make_parser()
-    st = Node('Root')
+    st = SuffixTree()
     ch = WURFLContentHandler(db, st)
     parser.setContentHandler(ch)
     parser.parse(wurfl_xml_stream)
