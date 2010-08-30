@@ -4,8 +4,8 @@ It should return a tuple (db, index)
 
     >>> from mobi.devices.wurfl.db import initialize_db
     >>> db, index = initialize_db(config)
-    >>> db #doctest: +ELLIPSIS
-    <mobi.devices.index.tcdbm.TCDBMWrapper ...>
+    >>> db is not None
+    True
     >>> index #doctest: +ELLIPSIS
     <mobi.devices.index.suffixtree.SuffixTree ...>
 
@@ -44,12 +44,11 @@ Let's play a bit more with the index.
     ...     " en-US; rv:1.9.1.8) Gecko/20100202 Firefox/3.5.8"
     >>> results = search(firefox_ua)
     >>> res = results[0][0]
-    >>> results
     >>> device = Device.deserialize(db[res.value])
     >>> device.id
-    ''
+    u'mozilla_ver5'
     >>> device.platform
-    'ads'
+    u'computer'
     >>> device.get_capability('is_wireless_device')
     u'false'
 """
@@ -74,7 +73,7 @@ def teardown(test):
     try:
         if Device.db:
             Device.db.close()
-        #shutil.rmtree(data_dir)
+        shutil.rmtree(data_dir)
     except:
         pass
 

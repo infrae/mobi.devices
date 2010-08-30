@@ -22,7 +22,7 @@
     >>> wclassifier = WurflClassifier(config)
     >>> device = wclassifier(firefox_ua)
     >>> device  # doctest: +ELLIPSIS
-    <mobi.devices.device.WDevice ...>
+    <mobi.devices.wurfl.parser.Device user_agent="Mozilla/5.0">
     >>> device.platform
     u'computer'
 

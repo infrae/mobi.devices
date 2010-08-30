@@ -6,7 +6,7 @@ from mobi.devices import PLATFORMS
 class Device(object):
     implements(IDevice)
 
-    def __init__(self, user_agent, type_, platform=""):
+    def __init__(self, user_agent, type_, platform=u"computer"):
         self.user_agent = user_agent
         self.type = type_
         self.platform = unicode(platform)

@@ -44,14 +44,14 @@
     >>> request = Request.blank('/')
     >>> response = request.get_response(wrapped)
     >>> response.headers['Set-Cookie'] # doctest: +ELLIPSIS
-    '__devinfo=eyJwbGF0Zm9ybSI6ICJmZWF0dXJlcGhvbmUiLCAidHlwZSI6ICJiYXNpYyJ9; Path=/'
+    '__devinfo=eyJwbGF0Zm9ybSI6ICJjb21wdXRlciIsICJ0eXBlIjogImJhc2ljIn0=; Path=/'
 
     We can set a max-age:
     >>> wrapped.set_cookie_max_age(10000)
     >>> request = Request.blank('/')
     >>> response = request.get_response(wrapped)
     >>> response.headers['Set-Cookie'] # doctest: +ELLIPSIS
-    '__devinfo=eyJwbGF0Zm9ybSI6ICJmZWF0dXJlcGhvbmUiLCAidHlwZSI6ICJiYXNpYyJ9; expires="..."; Max-Age=10000; Path=/'
+    '__devinfo=eyJwbGF0Zm9ybSI6ICJjb21wdXRlciIsICJ0eXBlIjogImJhc2ljIn0=; expires="..."; Max-Age=10000; Path=/'
 
     When client sends a cookie it is used as a cache.
 
@@ -80,6 +80,7 @@ class TestApp(object):
         self.environ = environ
         start_response('200 Ok', [('Content-Type', 'text/plain')])
         return ['hello!']
+
 
 import shutil
 import os

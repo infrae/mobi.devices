@@ -26,7 +26,10 @@ class WurflClassifier(object):
         self.db, self.index = initialize_db(conf)
 
     def __call__(self, user_agent):
-        node, string = self.index.search(user_agent)
+        match = self.index.search(user_agent)
+        if not match:
+            return None
+        node, string, pos = match
         device = WDevice.deserialize(self.db[node.value])
         return device
 
