@@ -53,7 +53,8 @@ class MobiDeviceMiddleware(object):
                  cache_opts=None,
                  debug=False,
                  cookie_max_age=0,
-                 var='/var/db'):
+                 var='/var/db'
+                 wurfl_file=None):
         self.debug = debug
         self.cookie_cache = cookie_cache
         cache_manager = CacheManager(
@@ -66,7 +67,8 @@ class MobiDeviceMiddleware(object):
         self.app = app
         self.set_cookie_max_age(int(cookie_max_age))
         # add config for db
-        self.classifiers = [MITClassifier(), WurflClassifier({'var': var})]
+        self.classifiers = [MITClassifier(),
+            WurflClassifier({'var': var, 'wurfl_file': wurfl_file})]
 
     def __call__(self, environ, start_response):
         request = Request(environ)
@@ -177,6 +179,7 @@ def device_middleware_filter_factory(global_conf, **local_conf):
         cookie_max_age = int(local_conf.get('cookie_max_age', 0))
         cookie_cache = local_conf.get('cookie_cache', not(debug))
         cache_options = {}
+        var_opt = local_conf.get('var', '/var/db')
         for key, value in local_conf.iteritems():
             if key.startswith('cache'):
                 cache_options[key] = value
@@ -184,6 +187,7 @@ def device_middleware_filter_factory(global_conf, **local_conf):
                                     debug=debug,
                                     cookie_cache=cookie_cache,
                                     cache_opts=cache_options,
-                                    cookie_max_age=cookie_max_age)
+                                    cookie_max_age=cookie_max_age,
+                                    var=var_opt)
     return filter
 
