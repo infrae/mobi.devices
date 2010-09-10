@@ -53,7 +53,7 @@ class MobiDeviceMiddleware(object):
                  cache_opts=None,
                  debug=False,
                  cookie_max_age=0,
-                 var='/var/db'
+                 var='/var/db',
                  wurfl_file=None):
         self.debug = debug
         self.cookie_cache = cookie_cache
