@@ -12,7 +12,7 @@ about the devices performing the request.
 For best performance, please install `pytc`. It is a package requirement since
 it is not available on all platforms.
 
-Paster example configuration:
+Paster example configuration::
 
 
     [app:yourapp]
