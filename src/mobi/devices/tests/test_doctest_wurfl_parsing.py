@@ -1,3 +1,5 @@
+# Copyright (c) 2010 Infrae. All rights reserved.
+# See also LICENSE.txt.
 """
 We will start by initializing the database from wurfl stream.
 It should return a tuple (db, index)

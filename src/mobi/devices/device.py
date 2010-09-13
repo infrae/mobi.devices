@@ -1,3 +1,5 @@
+# Copyright (c) 2010 Infrae. All rights reserved.
+# See also LICENSE.txt.
 from zope.interface import implements
 from mobi.interfaces.devices import (IDevice,
     IStandardDeviceType, IAdvancedDeviceType, IBasicDeviceType)

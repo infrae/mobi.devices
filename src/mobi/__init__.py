@@ -1,3 +1,5 @@
+# Copyright (c) 2010 Infrae. All rights reserved.
+# See also LICENSE.txt.
 # See http://peak.telecommunity.com/DevCenter/setuptools#namespace-packages
 try:
     __import__('pkg_resources').declare_namespace(__name__)

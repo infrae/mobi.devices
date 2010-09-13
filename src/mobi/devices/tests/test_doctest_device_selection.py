@@ -1,3 +1,5 @@
+# Copyright (c) 2010 Infrae. All rights reserved.
+# See also LICENSE.txt.
 """
     This module helps to find out what kind of mobile device the request is
     issued from.

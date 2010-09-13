@@ -1,3 +1,5 @@
+# Copyright (c) 2010 Infrae. All rights reserved.
+# See also LICENSE.txt.
 """
 anydbm wrapper for Tokyo Cabinet.
 The implementation is partial, only what's needed for our need as been
