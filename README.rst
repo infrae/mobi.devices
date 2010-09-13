@@ -2,6 +2,8 @@
 mobi.devices
 ============
 
+See documentation at http://mobi.infrae.com/
+
 ``mobi.devices`` is the set of tools to detect mobile user agents.
 It uses `WURFL database <http://wurfl.sourceforce.net>`_ as well as data from
 `MIT mobile project <http://m.mit.edu>`_.
@@ -9,7 +11,7 @@ It uses `WURFL database <http://wurfl.sourceforce.net>`_ as well as data from
 It also provides wsgi middlewares that can tag the request with some information
 about the devices performing the request.
 
-For best performance, please install :mod:`pytc`. It is not a package requirement
+For best performance, please install **pytc**. It is not a package requirement
 since it is not available on all platforms.
 
 Paster example configuration::
