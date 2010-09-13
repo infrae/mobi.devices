@@ -3,7 +3,7 @@
 import os
 from setuptools import setup, find_packages
 
-VERSION='1.0'
+VERSION='1.0.1'
 tests_require = []
 
 
