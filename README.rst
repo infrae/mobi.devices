@@ -9,8 +9,8 @@ It uses `WURFL database <http://wurfl.sourceforce.net>`_ as well as data from
 It also provides wsgi middlewares that can tag the request with some information
 about the devices performing the request.
 
-For best performance, please install `pytc`. It is a package requirement since
-it is not available on all platforms.
+For best performance, please install :mod:`pytc`. It is a package requirement
+since it is not available on all platforms.
 
 Paster example configuration::
 
