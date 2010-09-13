@@ -8,7 +8,7 @@ tests_require = []
 
 
 install_requirements = [
-    'infrae.cache',
+    'Beaker',
     'mobi.interfaces',
     'webob',
     'zope.interface',
@@ -19,9 +19,9 @@ setup(name='mobi.devices',
       version=VERSION,
       dependency_links=['http://dist.infrae.com/thirdparty'],
       description='Mobile Device detection',
-      long_description=open("README.txt").read() + "\n" +
+      long_description=open("README.rst").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
-      author='Antonin Amand',
+      author='Antonin Amand at Infrae',
       author_email='info@infrae.com',
       license="BSD",
       url='http://infrae.com/',
@@ -33,7 +33,6 @@ setup(name='mobi.devices',
       zip_safe=False,
       tests_require=tests_require,
       extras_require={'test': tests_require},
-      test_suite='nose.collector',
       entry_points = {
         'paste.filter_factory': [
             'classifier = '
