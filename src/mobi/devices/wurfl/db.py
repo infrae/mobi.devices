@@ -1,7 +1,7 @@
 # Copyright (c) 2010 Infrae. All rights reserved.
 # See also LICENSE.txt.
 from xml.sax import make_parser
-from mobi.devices.wurfl.parser import WURFLContentHandler
+from mobi.devices.wurfl.parser import Device, WURFLContentHandler
 from mobi.devices.index.suffixtree import SuffixTree
 from mutex import mutex
 import pickle
@@ -59,8 +59,8 @@ def open_or_create(filename, wurfl_file):
         # open and trunk it
         db = open_db('n')
         try:
-            if not os.path.exists(wurfl_file):
-                raise ValueError('wurfl file does not exists: %s' %
+            if not wurfl_file or not os.path.exists(wurfl_file):
+                raise ValueError("wurfl file does not exists: '%s'" %
                                  wurfl_file)
             open_file = open
             if wurfl_file.endswith('.gz'):

@@ -68,9 +68,13 @@ class MobiDeviceMiddleware(object):
             logger.info('MobiDeviceMiddleware start in debug mode.')
         self.app = app
         self.set_cookie_max_age(int(cookie_max_age))
+        wurfl_config = {}
+        if wurfl_file:
+            wurfl_config['wurfl_file'] = wurfl_config
+        wurfl_config['var'] = var
         # add config for db
         self.classifiers = [MITClassifier(),
-            WurflClassifier({'var': var, 'wurfl_file': wurfl_file})]
+            WurflClassifier(wurfl_config)]
 
     def __call__(self, environ, start_response):
         request = Request(environ)
