@@ -3,7 +3,7 @@
 from zope.interface import implements
 from mobi.interfaces.devices import (IDevice,
     IStandardDeviceType, IAdvancedDeviceType, IBasicDeviceType)
-from mobi.devices import PLATFORMS
+
 
 class Device(object):
     implements(IDevice)

@@ -3,7 +3,7 @@
 import os
 from setuptools import setup, find_packages
 
-VERSION='1.0dev'
+VERSION='1.0'
 tests_require = []
 
 
@@ -33,6 +33,7 @@ setup(name='mobi.devices',
       zip_safe=False,
       tests_require=tests_require,
       extras_require={'test': tests_require},
+      test_suite='mobi.devices.tests',
       entry_points = {
         'paste.filter_factory': [
             'classifier = '

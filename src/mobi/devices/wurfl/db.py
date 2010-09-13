@@ -1,7 +1,7 @@
 # Copyright (c) 2010 Infrae. All rights reserved.
 # See also LICENSE.txt.
 from xml.sax import make_parser
-from mobi.devices.wurfl.parser import Device, WURFLContentHandler
+from mobi.devices.wurfl.parser import WURFLContentHandler
 from mobi.devices.index.suffixtree import SuffixTree
 from mutex import mutex
 import pickle
