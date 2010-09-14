@@ -73,6 +73,10 @@ class MobiDeviceMiddleware(object):
             wurfl_config['wurfl_file'] = wurfl_config
         wurfl_config['var'] = var
         # add config for db
+        wurfl_config = {}
+        wurfl_config['var'] = var
+        if wurfl_file:
+            wurfl_config['wurfl_file'] = wurfl_file
         self.classifiers = [MITClassifier(),
             WurflClassifier(wurfl_config)]
 
