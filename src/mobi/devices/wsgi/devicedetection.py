@@ -111,16 +111,12 @@ class MobiDeviceMiddleware(object):
         dtype = device.type or IBasicDeviceType
         platform = device.platform or 'computer'
 
+        request.environ['mobi.devices.device'] = device
         request.environ['mobi.devices.type'] = \
             self.reverse_mapping[dtype]
         request.environ['mobi.devices.marker'] = dtype
         request.environ['mobi.devices.marker_name'] = dtype.__name__
         request.environ['mobi.devices.platform'] = platform
-        if self._is_mobile(platform):
-            request.environ['mobi.devices.is_mobile'] = 'yes'
-
-    def _is_mobile(self, platform):
-        return platform not in ('computer', 'spider',)
 
     def device_from_cookie(self, request):
         if not self.cookie_cache:

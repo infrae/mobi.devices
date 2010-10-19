@@ -2,7 +2,7 @@
 # See also LICENSE.txt.
 from xml.sax import make_parser
 from mobi.devices.wurfl.parser import Device, WURFLContentHandler
-from mobi.devices.index.suffixtree import SuffixTree
+from mobi.devices.index.radixtree import RadixTree
 from mutex import mutex
 import pickle
 import gzip
@@ -70,19 +70,19 @@ def open_or_create(filename, wurfl_file):
                 logger.info('creating device index...')
                 st = build_index_tree(db, f)
                 logger.info('storing device index...')
-                db['__suffixtree__'] = pickle.dumps(st)
+                db['__radixtree__'] = pickle.dumps(st)
             finally:
                 f.close()
         finally:
             db.close()
         # reopen database in readonly
         db = open_db('r')
-    return db, pickle.loads(db['__suffixtree__'])
+    return db, pickle.loads(db['__radixtree__'])
 
 
 def build_index_tree(db, wurfl_xml_stream):
     parser = make_parser()
-    st = SuffixTree()
+    st = RadixTree()
     ch = WURFLContentHandler(db, st)
     parser.setContentHandler(ch)
     parser.parse(wurfl_xml_stream)

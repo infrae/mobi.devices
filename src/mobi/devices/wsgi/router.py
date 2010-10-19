@@ -2,9 +2,22 @@
 # See also LICENSE.txt.
 from webob import Request
 import logging
+from mobi.devices.index.radixtree import RadixTree, WildcardSearch
 
 
 logger = logging.getLogger('mobi.devices.wsgi.router')
+
+mobile_matches = ['android',
+                  'symbianos'
+                  'iphone',
+                  'windows ce',
+                  'opera mini',
+                  'opera mobi',
+                  'nokia'
+                  'blackberry'
+                  'nokia'
+                  'motorola',
+                  'ericsson']
 
 
 class RouterMiddleware(object):
@@ -20,8 +33,15 @@ class RouterMiddleware(object):
     def __init__(self, app, config_map):
         self.app = app
         self._config = self._parse_config(config_map)
+        self._init_search()
         logger.info("mobi.devices router config :\n %s" %
                     str(self._config))
+
+    def _init_search(self):
+        tree = RadixTree()
+        for name in mobile_matches:
+            self._search_trie.add(name)
+        self._search = WildcardSearch(tree)
 
     def _parse_config(self, config_map):
         config = {}
@@ -32,6 +52,19 @@ class RouterMiddleware(object):
             else:
                 config[normal_host] = "http://%s/" % mobile_host
         return config
+
+    def is_mobile(self, request):
+        # Check for WAP Profile header, if there is one then this is a mobile
+        wap_profile = request.environ.get('HTTP_X_WAP_PROFILE', None)
+        if wap_profile is not None:
+            return True
+
+        user_agent = request.environ.get('HTTP_USER_AGENT', None)
+        if user_agent is not None:
+            results = self._search(user_agent.lower())
+            if len(results) > 0:
+                return True
+        return False
 
     def __call__(self, environ, start_response):
         port = 80
@@ -50,7 +83,7 @@ class RouterMiddleware(object):
         force_no_redirect = no_redirect_param or no_redirect_cookie
 
         # mobi.devices middleware has tagged it as mobile
-        if request.environ.get('mobi.devices.is_mobile'):
+        if self.is_mobile(request):
             if force_no_redirect:
                 response = request.get_response(self.app)
                 if not no_redirect_cookie:

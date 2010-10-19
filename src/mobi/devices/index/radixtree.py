@@ -170,10 +170,10 @@ class Node(object):
                 match_node.value = value or string
 
 
-class SuffixTree(Node):
+class RadixTree(Node):
 
     def __init__(self, value=None):
-        super(SuffixTree, self).__init__('', value)
+        super(RadixTree, self).__init__('', value)
 
 
 class WildcardSearch(object):

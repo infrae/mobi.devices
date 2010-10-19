@@ -114,6 +114,7 @@ class MITClassifier(object):
 
 # USE FOR TEST PURPOSE ONLY
 def get_device(ua):
+    from mobi.devices.device import Device
     device = MITClassifier()(ua)
     if device is None:
         device = WurflClassifier(None)(ua)

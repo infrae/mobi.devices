@@ -52,7 +52,11 @@ class Device(object):
         if hasattr(self, '__platform'):
             return self.__platform
 
-        platform = None
+        for exstring in [u'bot', u'spider', u'crawl']:
+            if exstring in self.user_agent:
+                self.__platform = u'spider'
+                return self.__platform
+
         if self.get_capability('is_wireless_device') == u'true':
             platform_names = PLATFORMS.keys()
             os = str(self.get_capability('device_os')).lower()
@@ -67,7 +71,7 @@ class Device(object):
             for fallback in fallbacks:
                 if 'bot' in fallback or \
                         fallback == 'generic_web_crawler':
-                    self._platform = u'spider'
+                    self.__platform = u'spider'
                     return self.__platform
             self.__platform = u'computer'
         return self.__platform
@@ -93,7 +97,7 @@ class Device(object):
             else:
                 self.__type = IBasicDeviceType
             return self.__type
-        except (ValueError, TypeError), e:
+        except (ValueError, TypeError):
             self.__type = IBasicDeviceType
             return self.__type
 

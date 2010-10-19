@@ -9,7 +9,6 @@ Its aims is to redirect mobile clients to a different hostname.
 ex: infrae.com => m.infrae.com
 
 It has to be below device detection middleware in the wsgy stack.
-
 >>> from mobi.devices.wsgi.router import RouterMiddleware
 >>> app = TestApp()
 >>> stack = RouterMiddleware(app, {'infrae.com': 'm.infrae.com',
@@ -30,11 +29,18 @@ With the mobile host it does nothing as well.
 >>> request.call_application(stack)
 ('200 Ok', [('Content-Type', 'text/plain')], ['hello!'])
 
+
+>>> iphone_ua = \
+...   u'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_1 like Mac OS X; en-us) '
+...   u'AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 '
+...   u'Mobile/8B5097d Safari/6531.22.7'
+
+
 With the configured host it does not redirects because it is not marked as
 a mobile device.
-
 >>> request = Request.blank('/')
 >>> request.environ['HTTP_HOST'] = 'infrae.com:80'
+>>> request.environ['HTTP_USER_AGENT'] = iphone_ua
 >>> request.call_application(stack)
 ('200 Ok', [('Content-Type', 'text/plain')], ['hello!'])
 
@@ -90,7 +96,11 @@ class TestApp(object):
 def test_suite():
     import unittest
     import doctest
-
     suite = unittest.TestSuite()
     suite.addTest(doctest.DocTestSuite(__name__))
     return suite
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+

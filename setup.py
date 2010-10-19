@@ -6,13 +6,18 @@ from setuptools import setup, find_packages
 VERSION='1.0.1'
 tests_require = []
 
-
 install_requirements = [
     'Beaker',
     'mobi.interfaces',
     'webob',
     'zope.interface',
 ]
+
+# add simplejson requirement in json not available in python
+try:
+    import json
+except ImportError:
+    install_requirements.append('simplejson')
 
 
 setup(name='mobi.devices',
