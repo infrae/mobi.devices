@@ -5,6 +5,7 @@ from zope.interface import implements
 from mobi.interfaces.devices import IClassifier, IBasicDeviceType
 from mobi.devices.device import MITDevice
 from mobi.devices import DATA_DIR
+from mobi.devices.index.radixtree import NOTSET
 from mobi.devices.wurfl.db import initialize_db
 from mobi.devices.wurfl.parser import Device as WDevice
 
@@ -28,11 +29,23 @@ class WurflClassifier(object):
         self.db, self.index = initialize_db(conf)
 
     def __call__(self, user_agent):
+        if not user_agent:
+            return None
+
         match = self.index.search(user_agent)
         if not match:
             return None
-        node, string, pos = match
-        device = WDevice.deserialize(self.db[node.value])
+
+        node, matchstring, matchlen = match
+        dev_id = node.value
+
+        if dev_id is NOTSET:
+            ratio = matchlen / len(user_agent)
+            if matchlen < 18 and ratio < 0.8:
+                return None
+            dev_id = node.values().next()
+
+        device = WDevice.deserialize(self.db[dev_id])
         return device
 
 

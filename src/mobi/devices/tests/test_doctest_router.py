@@ -30,17 +30,22 @@ With the mobile host it does nothing as well.
 ('200 Ok', [('Content-Type', 'text/plain')], ['hello!'])
 
 
->>> iphone_ua = \
-...   u'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_1 like Mac OS X; en-us) '
-...   u'AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 '
+>>> iphone_ua = \\
+...   u'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_1 like Mac OS X; en-us) ' \\
+...   u'AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 ' \\
 ...   u'Mobile/8B5097d Safari/6531.22.7'
 
 
-With the configured host it does not redirects because it is not marked as
+>>> firefox_ua = \\
+... u"Mozilla/5.0 (Windows; U; Windows NT 6.1; es-ES; rv:1.9.1) " \\
+... u"Gecko/20090624 Firefox/3.5 (.NET CLR 3.5.30729)"
+
+
+With the configured host it does not redirects because it is not detected as
 a mobile device.
 >>> request = Request.blank('/')
 >>> request.environ['HTTP_HOST'] = 'infrae.com:80'
->>> request.environ['HTTP_USER_AGENT'] = iphone_ua
+>>> request.environ['HTTP_USER_AGENT'] = firefox_ua
 >>> request.call_application(stack)
 ('200 Ok', [('Content-Type', 'text/plain')], ['hello!'])
 
@@ -48,7 +53,7 @@ If it is marked as a mobile devices then it redirects to mobile site.
 
 >>> request = Request.blank('/')
 >>> request.environ['HTTP_HOST'] = 'infrae.com:80'
->>> request.environ['mobi.devices.is_mobile'] = 'yes'
+>>> request.environ['HTTP_USER_AGENT'] = iphone_ua
 >>> request.call_application(stack)
 ('302 Redirect', [('Location', 'http://m.infrae.com/')], [])
 
@@ -56,7 +61,7 @@ it should work for the other host as well.
 
 >>> request = Request.blank('/')
 >>> request.environ['HTTP_HOST'] = 'next.infrae.com:80'
->>> request.environ['mobi.devices.is_mobile'] = 'yes'
+>>> request.environ['HTTP_USER_AGENT'] = iphone_ua
 >>> request.call_application(stack) # doctest: +NORMALIZE_WHITESPACE
 ('302 Redirect', [('Location', 'http://m.next.infrae.com/')], [])
 
@@ -65,7 +70,7 @@ and add a cookie for future requests.
 
 >>> request = Request.blank('/?__no_redirect=yes')
 >>> request.environ['HTTP_HOST'] = 'infrae.com:80'
->>> request.environ['mobi.devices.is_mobile'] = 'yes'
+>>> request.environ['HTTP_USER_AGENT'] = iphone_ua
 >>> request.call_application(stack) # doctest: +NORMALIZE_WHITESPACE
 ('200 Ok', [('Content-Type', 'text/plain'),
   ('Set-Cookie', '__no_redirect=on; Path=/')], ['hello!'])
@@ -74,7 +79,7 @@ The future requests to the site with the cookie will not redirect.
 
 >>> request = Request.blank('/')
 >>> request.headers['Cookie'] = '__no_redirect=on'
->>> request.environ['mobi.devices.is_mobile'] = 'yes'
+>>> request.environ['HTTP_USER_AGENT'] = iphone_ua
 >>> request.call_application(stack)
 ('200 Ok', [('Content-Type', 'text/plain')], ['hello!'])
 

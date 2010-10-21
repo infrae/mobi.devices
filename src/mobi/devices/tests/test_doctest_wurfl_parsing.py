@@ -4,55 +4,41 @@
 We will start by initializing the database from wurfl stream.
 It should return a tuple (db, index)
 
+    >>> from mobi.devices.index.radixtree import NOTSET
     >>> from mobi.devices.wurfl.db import initialize_db
     >>> db, index = initialize_db(config)
     >>> db is not None
     True
     >>> index #doctest: +ELLIPSIS
-    <mobi.devices.index.suffixtree.SuffixTree ...>
+    <mobi.devices.index.radixtree.RadixTree ...>
 
 Now we'll have a look at what's inside the index.
 
     >>> user_agent = 'Mozilla/5.0 (iPhone; ...'
     >>> node, string, pos = index.search(user_agent)
-    >>> dev_id = node.value
-    >>> dev_id
-    u'apple_generic'
+    >>> node.value
+    <class 'mobi.devices.index.radixtree.NOTSET'>
     >>> string
-    u'Mozilla/5.0 (iPhone;'
+    u'Mozilla/5.0 (iPhone; '
     >>> pos
-    19
+    21
+    >>> dev_id = node.values().next()
+
 
 Let's look that up into the database.
 
     >>> from mobi.devices.wurfl.db import Device
     >>> device = Device.deserialize(db[dev_id])
-    >>> device
-    <mobi.devices.wurfl.parser.Device user_agent="Mozilla/5.0 (iPhone;">
+    >>> device #doctest: +ELLIPSIS
+    <mobi.devices.wurfl.parser.Device user_agent="Mozilla/5.0 (iPhone; ...
     >>> int(device.get_capability('xhtml_support_level'))
     4
     >>> device.parent_id
-    u'generic_xhtml'
+    u'apple_iphone_ver2'
     >>> device.type
     <InterfaceClass mobi.interfaces.devices.IAdvancedDeviceType>
     >>> device.platform
     u'iphone'
-
-Let's play a bit more with the index.
-
-    >>> from mobi.devices.index.suffixtree import WildcardSearch
-    >>> search = WildcardSearch(index)
-    >>> firefox_ua = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5;" \\
-    ...     " en-US; rv:1.9.1.8) Gecko/20100202 Firefox/3.5.8"
-    >>> results = search(firefox_ua)
-    >>> res = results[0][0]
-    >>> device = Device.deserialize(db[res.value])
-    >>> device.id
-    u'mozilla_ver5'
-    >>> device.platform
-    u'computer'
-    >>> device.get_capability('is_wireless_device')
-    u'false'
 """
 
 import shutil

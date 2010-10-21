@@ -3,6 +3,13 @@
 import bisect
 
 
+class Marker(type):
+    pass
+
+class NOTSET(Marker):
+    pass
+
+
 def common_start(str, str_cmp):
     i = 0
     min_len = min(len(str), len(str_cmp))
@@ -18,7 +25,7 @@ class Node(object):
     infix = None # wikipedia!
     value = None
 
-    def __init__(self, infix, value=None):
+    def __init__(self, infix, value=NOTSET):
         self.infix = infix
         self.value = value
 
@@ -34,14 +41,17 @@ class Node(object):
     def is_leaf(self):
         return bool(self.children)
 
+    def __getitem__(self, index):
+        return self.children[index]
+
     def __lt__(self, other):
         return self.infix < other.infix
 
-    def display(self, io, indent=0):
+    def display(self, indent=0):
         print "%s|" % (" " * (indent))
         print "%s+--+ '%s' | %s" % (" " * indent, self.infix, str(self.value))
         for child in (self.children or []):
-            child.display(io, indent=indent + 3)
+            child.display(indent=indent + 3)
 
     def search_stackless(self, string):
         stop = len(string) - 1
@@ -72,53 +82,53 @@ class Node(object):
         return value_index, value
 
     def values(self):
-        res = []
-        if self.value:
-            res.append(self.value)
+        if self.value is not NOTSET:
+            yield self.value
         if self.children:
             for child in self.children:
-                res.extend(child.values())
-        return res
+                for value in child.values():
+                    yield value
 
     def search(self, string, buf='', pos=0):
         if string == '':
-            return self.value and (self, buf + self.infix, pos)
+            return (self, buf + self.infix, pos + len(self.infix))
 
         for child in self.children or []:
-            if string.startswith(child.infix):
-                clen = len(child.infix)
-                match = child.search(string[clen:],
-                                     buf + self.infix,
-                                     pos + len(self.infix))
-                if match:
-                    return match
-                else:
-                    return self.value and (self, buf + self.infix, pos)
+            common_len, common_string = common_start(string, child.infix)
+            if common_len:
+                if common_len == len(child.infix):
+                    return child.search(string[common_len:],
+                                         buf + self.infix,
+                                         pos + len(self.infix))
+                return (child,
+                        buf + self.infix + child.infix[:common_len],
+                        pos + len(self.infix) + common_len)
 
-        return self.value and (self, buf + self.infix, pos)
+        return (self, buf + self.infix, pos + len(self.infix))
 
-    def add(self, string, value=None):
+    def add(self, string, value=NOTSET):
         if string == '':
-            self.value = value
-            return
+            if value is not NOTSET:
+                self.value = value
+            return self
 
         for child in self.children or []:
             if child.infix == string:
-                child.add('', value=value or string)
+                return child.add('', value=value)
             common_len, common_suffix = common_start(child.infix, string)
             if common_len:
                 if common_len == len(child.infix):
                     return child.add(
-                        string[common_len:], value=value or string)
+                        string[common_len:], value=value)
 
                 self.remove_child(child)
                 child.infix = child.infix[common_len:]
                 new_base = Node(common_suffix)
                 new_base.add_child(child)
                 self.add_child(new_base)
-                return new_base.add(string[common_len:], value=value or string)
+                return new_base.add(string[common_len:], value=value)
 
-        node = Node(string, value or string)
+        node = Node(string, value)
         self.add_child(node)
         return node
 
@@ -172,23 +182,5 @@ class Node(object):
 
 class RadixTree(Node):
 
-    def __init__(self, value=None):
-        super(RadixTree, self).__init__('', value)
-
-
-class WildcardSearch(object):
-
-    def __init__(self, node):
-        self.st = node
-
-    def __call__(self, string):
-        results = []
-        pos = 0
-        l = len(string)
-        while pos < l:
-           r = self.st.search(string[pos:])
-           if r:
-               node, matched_string, spos = r
-               results.append((node, matched_string, pos + spos))
-           pos += 1
-        return results
+    def __init__(self):
+        super(RadixTree, self).__init__('')

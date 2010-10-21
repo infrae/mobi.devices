@@ -2,20 +2,21 @@
 # See also LICENSE.txt.
 from webob import Request
 import logging
-from mobi.devices.index.radixtree import RadixTree, WildcardSearch
+import re
+from mobi.devices.index import RadixTree, NOTSET
 
 
 logger = logging.getLogger('mobi.devices.wsgi.router')
 
 mobile_matches = ['android',
-                  'symbianos'
+                  'symbianos',
                   'iphone',
                   'windows ce',
                   'opera mini',
                   'opera mobi',
-                  'nokia'
-                  'blackberry'
-                  'nokia'
+                  'nokia',
+                  'blackberry',
+                  'nokia',
                   'motorola',
                   'ericsson']
 
@@ -40,8 +41,8 @@ class RouterMiddleware(object):
     def _init_search(self):
         tree = RadixTree()
         for name in mobile_matches:
-            self._search_trie.add(name)
-        self._search = WildcardSearch(tree)
+            tree.add(name, value=name)
+        self._search = tree.search
 
     def _parse_config(self, config_map):
         config = {}
@@ -60,10 +61,11 @@ class RouterMiddleware(object):
             return True
 
         user_agent = request.environ.get('HTTP_USER_AGENT', None)
-        if user_agent is not None:
-            results = self._search(user_agent.lower())
-            if len(results) > 0:
+        for word in re.split(r'\W{2,}', user_agent):
+            node, match, matchlen = self._search(word.lower())
+            if node.value is not NOTSET and len(node.value) == matchlen:
                 return True
+
         return False
 
     def __call__(self, environ, start_response):
