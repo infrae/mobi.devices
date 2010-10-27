@@ -67,7 +67,6 @@ it should work for the other host as well.
 
 We can force no redirect with a GET param and it will prevent from redirecting
 and add a cookie for future requests.
-
 >>> request = Request.blank('/?__no_redirect=yes')
 >>> request.environ['HTTP_HOST'] = 'infrae.com:80'
 >>> request.environ['HTTP_USER_AGENT'] = iphone_ua
@@ -83,6 +82,12 @@ The future requests to the site with the cookie will not redirect.
 >>> request.call_application(stack)
 ('200 Ok', [('Content-Type', 'text/plain')], ['hello!'])
 
+A request without a user agent does nothing as well.
+
+>>> request = Request.blank('/')
+>>> request.environ['HTTP_HOST'] = 'infrae.com:80'
+>>> request.call_application(stack)
+('200 Ok', [('Content-Type', 'text/plain')], ['hello!'])
 
 """
 

@@ -61,6 +61,9 @@ class RouterMiddleware(object):
             return True
 
         user_agent = request.environ.get('HTTP_USER_AGENT', None)
+        if not user_agent:
+            return False
+
         for word in re.split(r'\W{2,}', user_agent):
             node, match, matchlen = self._search(word.lower())
             if node.value is not NOTSET and len(node.value) == matchlen:

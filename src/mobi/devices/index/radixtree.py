@@ -88,7 +88,7 @@ class Node(object):
             for child in self.children:
                 for value in child.values():
                     yield value
-
+ 
     def search(self, string, buf='', pos=0):
         if string == '':
             return (self, buf + self.infix, pos + len(self.infix))
