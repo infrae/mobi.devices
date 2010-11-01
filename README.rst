@@ -55,3 +55,8 @@ Paster example configuration::
     port = 8080
     threadpool_workers = 7
 
+If you are using apache with rewrite rules that modify the path and
+you want the router to route on the original path, please add the
+following rule before any rewrite rule ::
+
+    RewriteRule .* - [E=X-Original-Path:%{PATH_INFO}]

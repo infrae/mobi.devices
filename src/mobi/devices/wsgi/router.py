@@ -97,15 +97,21 @@ class RouterMiddleware(object):
                         self.no_redirect_param_name, 'on', path="/")
                 return response(environ, start_response)
 
-            target = self._config[hostname]
+            location = self._config[hostname]
             if self.follow_path:
-                target = target[:-1] + request.path_info
-                if request.query_string:
-                    target += '?' + request.query_string
-            start_response('302 Redirect', [('Location', target,)])
+                location = self._get_location(request, location)
+            start_response('302 Redirect', [('Location', location,)])
             return []
 
         return self.app(environ, start_response)
+
+    def _get_location(self, request, target):
+        path = request.environ.get('HTTP_X_ORIGINAL_PATH', request.path_info)
+        # trim /
+        location = target[:-1] + path
+        if request.query_string:
+            location += '?' + request.query_string
+        return location
 
 
 # paste deploy entry point

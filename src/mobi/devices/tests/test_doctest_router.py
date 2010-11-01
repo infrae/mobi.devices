@@ -107,6 +107,20 @@ redirects to the mobile site.
   'http://m.infrae.com/path/to/something?param1=joe&name=doe')],
 [])
 
+If server use rewrite rules, it can provide X-Original-Path header to allow
+to redirect to the original path.
+
+>>> request = Request.blank('/path/to/rewritten_path?param1=joe&name=doe')
+>>> request.environ['HTTP_X_ORIGINAL_PATH'] = '/originalpath'
+>>> request.environ['HTTP_HOST'] = 'infrae.com:80'
+>>> request.environ['HTTP_USER_AGENT'] = iphone_ua
+>>> request.call_application(stack) #doctest: +NORMALIZE_WHITESPACE
+('302 Redirect',
+[('Location',
+  'http://m.infrae.com/originalpath?param1=joe&name=doe')],
+[])
+
+
 """
 
 class TestApp(object):
