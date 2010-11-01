@@ -106,7 +106,9 @@ class RouterMiddleware(object):
         return self.app(environ, start_response)
 
     def _get_location(self, request, target):
-        path = request.environ.get('HTTP_X_ORIGINAL_PATH', request.path_info)
+        path = request.environ.get('HTTP_X_ORIGINAL_PATH', None)
+        if not path:
+            path = request.path_info
         # trim /
         location = target[:-1] + path
         if request.query_string:
