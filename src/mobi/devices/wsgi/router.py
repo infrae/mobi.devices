@@ -31,7 +31,8 @@ class RouterMiddleware(object):
     """
     no_redirect_param_name = '__no_redirect'
 
-    def __init__(self, app, config_map):
+    def __init__(self, app, config_map, follow_path=False):
+        self.follow_path = follow_path
         self.app = app
         self._config = self._parse_config(config_map)
         self._init_search()
@@ -88,7 +89,7 @@ class RouterMiddleware(object):
         force_no_redirect = no_redirect_param or no_redirect_cookie
 
         # mobi.devices middleware has tagged it as mobile
-        if self.is_mobile(request):
+        if request.method == 'GET' and self.is_mobile(request):
             if force_no_redirect:
                 response = request.get_response(self.app)
                 if not no_redirect_cookie:
@@ -97,6 +98,10 @@ class RouterMiddleware(object):
                 return response(environ, start_response)
 
             target = self._config[hostname]
+            if self.follow_path:
+                target = target[:-1] + request.path_info
+                if request.query_string:
+                    target += '?' + request.query_string
             start_response('302 Redirect', [('Location', target,)])
             return []
 
@@ -105,7 +110,8 @@ class RouterMiddleware(object):
 
 # paste deploy entry point
 def router_middleware_filter_factory(global_conf, **local_conf):
+    follow_path = local_conf.get('follow_path', False)
     def filter(app):
-        return RouterMiddleware(app, local_conf)
+        return RouterMiddleware(app, local_conf, follow_path=follow_path,)
 
     return filter

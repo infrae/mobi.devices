@@ -77,6 +77,7 @@ and add a cookie for future requests.
 The future requests to the site with the cookie will not redirect.
 
 >>> request = Request.blank('/')
+>>> request.environ['HTTP_HOST'] = 'infrae.com:80'
 >>> request.headers['Cookie'] = '__no_redirect=on'
 >>> request.environ['HTTP_USER_AGENT'] = iphone_ua
 >>> request.call_application(stack)
@@ -88,6 +89,23 @@ A request without a user agent does nothing as well.
 >>> request.environ['HTTP_HOST'] = 'infrae.com:80'
 >>> request.call_application(stack)
 ('200 Ok', [('Content-Type', 'text/plain')], ['hello!'])
+
+
+If the follow_path option is activated it should keep the path when it
+redirects to the mobile site.
+
+>>> stack = RouterMiddleware(app, {
+...     'infrae.com': 'm.infrae.com',
+...     'next.infrae.com': 'm.next.infrae.com'}, follow_path=True)
+
+>>> request = Request.blank('/path/to/something?param1=joe&name=doe')
+>>> request.environ['HTTP_HOST'] = 'infrae.com:80'
+>>> request.environ['HTTP_USER_AGENT'] = iphone_ua
+>>> request.call_application(stack) #doctest: +NORMALIZE_WHITESPACE
+('302 Redirect',
+[('Location',
+  'http://m.infrae.com/path/to/something?param1=joe&name=doe')],
+[])
 
 """
 
