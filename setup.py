@@ -3,7 +3,7 @@
 import os
 from setuptools import setup, find_packages
 
-VERSION='1.0.1'
+VERSION='1.1'
 tests_require = []
 
 install_requirements = [
@@ -43,8 +43,8 @@ setup(name='mobi.devices',
         'paste.filter_factory': [
             'classifier = '
               'mobi.devices.wsgi.devicedetection:'
-              'device_middleware_filter_factory',
+                'device_middleware_filter_factory',
             'router = '
               'mobi.devices.wsgi.router:'
-              'router_middleware_filter_factory']}
+                'router_middleware_filter_factory']}
       )

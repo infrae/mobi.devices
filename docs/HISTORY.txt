@@ -1,6 +1,10 @@
 Changelog
 =========
 
+mobi.devices 1.1 (2010-12-20)
+-----------------------------
+- add original path http header handler to make router work with rewrite rules.
+- add simple router middleware.
 
 mobi.devices 1.0.1 (2010-09-14)
 -------------------------------
