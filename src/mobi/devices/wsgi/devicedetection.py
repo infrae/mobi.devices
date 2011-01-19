@@ -45,7 +45,7 @@ class MobiDeviceMiddleware(object):
     ]
 
     DEFAULT_CACHE_OPTIONS = {
-        'cache.type': 'memorylru',
+        'cache.type': 'memory',
         'cache.lock_dir': '/tmp',
         'cache.max_items': 1000,
     }
