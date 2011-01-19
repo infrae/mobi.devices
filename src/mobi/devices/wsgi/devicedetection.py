@@ -12,7 +12,10 @@ from beaker.util import parse_cache_config_options
 
 import logging
 import base64
-import json
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 logger = logging.getLogger('mobi.devices.wsgi')
 
