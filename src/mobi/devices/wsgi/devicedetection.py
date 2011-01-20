@@ -18,6 +18,8 @@ except ImportError:
     import simplejson as json
 
 logger = logging.getLogger('mobi.devices.wsgi')
+MIT_CLASSIFIER = int('01', 2)
+WURFL_CLASSIFIER = int('10', 2)
 
 _marker = object()
 
@@ -59,7 +61,8 @@ class MobiDeviceMiddleware(object):
                  debug=False,
                  cookie_max_age=0,
                  var='/var/db',
-                 wurfl_file=None):
+                 wurfl_file=None,
+                 classifiers=WURFL_CLASSIFIER|MIT_CLASSIFIER):
         self.debug = debug
         self.cookie_cache = cookie_cache
         cache_manager = CacheManager(
@@ -71,17 +74,20 @@ class MobiDeviceMiddleware(object):
             logger.info('MobiDeviceMiddleware start in debug mode.')
         self.app = app
         self.set_cookie_max_age(int(cookie_max_age))
-        wurfl_config = {}
-        if wurfl_file:
-            wurfl_config['wurfl_file'] = wurfl_config
-        wurfl_config['var'] = var
-        # add config for db
-        wurfl_config = {}
-        wurfl_config['var'] = var
-        if wurfl_file:
-            wurfl_config['wurfl_file'] = wurfl_file
-        self.classifiers = [MITClassifier(),
-            WurflClassifier(wurfl_config)]
+        self.classifiers = []
+        if MIT_CLASSIFIER & classifiers > 0:
+            self.classifiers.append(MITClassifier())
+        if WURFL_CLASSIFIER & classifiers > 0:
+            wurfl_config = {}
+            if wurfl_file:
+                wurfl_config['wurfl_file'] = wurfl_config
+            wurfl_config['var'] = var
+            # add config for db
+            wurfl_config = {}
+            wurfl_config['var'] = var
+            if wurfl_file:
+                wurfl_config['wurfl_file'] = wurfl_file
+            self.classifiers.append(WurflClassifier(wurfl_config))
 
     def __call__(self, environ, start_response):
         request = Request(environ)
