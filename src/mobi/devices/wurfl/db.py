@@ -38,7 +38,7 @@ DEFAULTS = {
 
 def initialize_db(config=None):
     local_config = DEFAULTS.copy()
-    if local_config is not None:
+    if config is not None:
         local_config.update(config)
     if not local_config.has_key('var'):
         raise ValueError('no storage directory ("var"), defined')
