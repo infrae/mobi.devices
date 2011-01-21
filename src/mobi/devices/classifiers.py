@@ -25,7 +25,7 @@ except ImportError:
 class WurflClassifier(object):
     implements(IClassifier)
 
-    def __init__(self, conf):
+    def __init__(self, conf=None):
         self.db, self.index = initialize_db(conf)
 
     def __call__(self, user_agent):

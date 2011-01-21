@@ -58,8 +58,7 @@ class MobiDeviceMiddleware(object):
                  cache_opts=None,
                  debug=False,
                  cookie_max_age=0,
-                 var='/var/db',
-                 wurfl_file=None):
+                 classifiers=[]):
         self.debug = debug
         self.cookie_cache = cookie_cache
         cache_manager = CacheManager(
@@ -71,17 +70,8 @@ class MobiDeviceMiddleware(object):
             logger.info('MobiDeviceMiddleware start in debug mode.')
         self.app = app
         self.set_cookie_max_age(int(cookie_max_age))
-        wurfl_config = {}
-        if wurfl_file:
-            wurfl_config['wurfl_file'] = wurfl_config
-        wurfl_config['var'] = var
-        # add config for db
-        wurfl_config = {}
-        wurfl_config['var'] = var
-        if wurfl_file:
-            wurfl_config['wurfl_file'] = wurfl_file
-        self.classifiers = [MITClassifier(),
-            WurflClassifier(wurfl_config)]
+        self.classifiers = classifiers if isinstance(classifiers, list) \
+                else [classifiers]
 
     def __call__(self, environ, start_response):
         request = Request(environ)
@@ -188,15 +178,23 @@ def device_middleware_filter_factory(global_conf, **local_conf):
         cookie_max_age = int(local_conf.get('cookie_max_age', 0))
         cookie_cache = local_conf.get('cookie_cache', not(debug))
         cache_options = {}
-        var_opt = local_conf.get('var', '/var/db')
         for key, value in local_conf.iteritems():
             if key.startswith('cache'):
                 cache_options[key] = value
+
+        wurfl_config = {}
+        var = local_conf.get('var', None),
+        wurfl_file = local_conf.get('wurfl_file', None)
+        if wurfl_file is not None:
+            wurfl_config['wurfl_file'] = wurfl_file
+        if var is not None:
+            wurfl_config['var'] = var
+        classifiers = [MITClassifier(), WurflClassifier(wurfl_config)]
         return MobiDeviceMiddleware(app,
                                     debug=debug,
                                     cookie_cache=cookie_cache,
                                     cache_opts=cache_options,
                                     cookie_max_age=cookie_max_age,
-                                    var=var_opt)
+                                    classifiers=classifiers)
     return filter
 
