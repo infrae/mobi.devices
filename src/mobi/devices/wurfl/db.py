@@ -31,7 +31,7 @@ except ImportError:
 _dirname = os.path.dirname(__file__)
 
 DEFAULTS = {
-    'var': os.path.join(_dirname, 'data'),
+    'var': '/tmp',
     'wurfl_file': os.path.join(
         _dirname, '..', 'data', 'WURFL', 'wurfl.xml.gz'),
 }
