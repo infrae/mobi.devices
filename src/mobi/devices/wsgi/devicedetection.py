@@ -24,8 +24,14 @@ _marker = object()
 def serialize_cookie(data):
     return base64.b64encode(json.dumps(data))
 
+
 def deserialize_cookie(data):
-    return json.loads(base64.b64decode(data) or '{}')
+    try:
+        return json.loads(base64.b64decode(data) or '{}')
+    except (Exception,), e:
+        logger.warn('error while deserializing cookie : %s' % str(e))
+        return None
+
 
 class MobiDeviceMiddleware(object):
     """ The middleware aims at detecting devices type from User agents.
@@ -117,6 +123,8 @@ class MobiDeviceMiddleware(object):
         data = request.cookies.get(self.PARAM_NAME, None)
         if data is not None:
             cookie_val = deserialize_cookie(data)
+            if cookie_val is None:
+                return None
             dtype = self.mapping.get(cookie_val['type'],
                 IBasicDeviceType)
             return Device(request.environ.get('HTTP_USER_AGENT'),

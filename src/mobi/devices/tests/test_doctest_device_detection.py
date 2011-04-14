@@ -50,29 +50,38 @@
     >>> request = Request.blank('/')
     >>> response = request.get_response(wrapped)
     >>> response.headers['Set-Cookie'] # doctest: +ELLIPSIS
-    '__devinfo=eyJwbGF0Zm9ybSI6ICJjb21wdXRlciIsICJ0eXBlIjogImJhc2ljIn0=; Path=/'
+    '__devinfo="eyJwbGF0Zm9ybSI6ICJjb21wdXRlciIsICJ0eXBlIjogImJhc2ljIn0\\\\075"; Path=/'
 
     We can set a max-age:
     >>> wrapped.set_cookie_max_age(10000)
     >>> request = Request.blank('/')
     >>> response = request.get_response(wrapped)
     >>> response.headers['Set-Cookie'] # doctest: +ELLIPSIS
-    '__devinfo=eyJwbGF0Zm9ybSI6ICJjb21wdXRlciIsICJ0eXBlIjogImJhc2ljIn0=; expires="..."; Max-Age=10000; Path=/'
+    '__devinfo="eyJwbGF0Zm9ybSI6ICJjb21wdXRlciIsICJ0eXBlIjogImJhc2ljIn0\\\\075"; expires="..."; Max-Age=10000; Path=/'
+    >>> cookie = response.headers['Set-Cookie']
+
 
     When client sends a cookie it is used as a cache.
 
     >>> request = Request.blank('/')
-    >>> request.environ['HTTP_COOKIE'] = '__devinfo=%s' % serialize_cookie(
-    ...     {'type': 'advanced', 'platform': 'spider'})
+    >>> request.environ['HTTP_COOKIE'] = cookie
     >>> response = request.get_response(wrapped)
     >>> response.headers.get('Set-Cookie', None) is None
     True
     >>> app.environ['mobi.devices.marker_name']
-    'IAdvancedDeviceType'
+    'IBasicDeviceType'
     >>> app.environ['mobi.devices.marker']
-    <InterfaceClass mobi.interfaces.devices.IAdvancedDeviceType>
+    <InterfaceClass mobi.interfaces.devices.IBasicDeviceType>
     >>> app.environ['mobi.devices.platform']
-    u'spider'
+    u'computer'
+
+    When client use a malformed cookie it doesn't fail.
+
+    >>> request = Request.blank('/')
+    >>> request.environ['HTTP_COOKIE'] = '__devinfo=10931280391823asd=='
+    >>> response = request.get_response(wrapped)
+
+
 """
 
 
