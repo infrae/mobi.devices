@@ -1,10 +1,10 @@
 Changelog
 =========
 
-mobi.devices 1.2 (unreleased)
+mobi.devices 1.2 (2011-04-14)
 -----------------------------
 
-changes..
+- add more configuration options (Bruno Binet)
 
 mobi.devices 1.1 (2010-12-20)
 -----------------------------
