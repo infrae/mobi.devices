@@ -8,8 +8,12 @@
     >>> from mobi.devices.wsgi.devicedetection\\
     ...   import serialize_cookie, deserialize_cookie
 
+    >>> from mobi.devices.classifiers import MITClassifier
+
+    >>> classifiers = [MITClassifier()]
+
     >>> app = TestApp()
-    >>> wrapped = MobiDeviceMiddleware(app, var=config['var'])
+    >>> wrapped = MobiDeviceMiddleware(app, classifiers=classifiers)
 
     The environment is set with an user agent string.
 
