@@ -191,7 +191,7 @@ def device_middleware_filter_factory(global_conf, **local_conf):
                 cache_options[key] = value
 
         wurfl_config = {}
-        var = local_conf.get('var', None),
+        var = local_conf.get('var', None)
         wurfl_file = local_conf.get('wurfl_file', None)
         if wurfl_file is not None:
             wurfl_config['wurfl_file'] = wurfl_file
