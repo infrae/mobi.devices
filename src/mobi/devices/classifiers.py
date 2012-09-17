@@ -93,10 +93,10 @@ class MITUAPatternMatcher(object):
         for dev_info in self.__patterns:
             matcher = dev_info['matcher']
             if matcher(ua):
-                logger.info("User Agent matched against MIT patterns")
-                logger.info("Device info : %s" % dev_info)
+                logger.debug(
+                    u"User Agent matched against MIT patterns: %s", dev_info)
                 return dev_info
-        logger.info("Device lookup failed in MIT db.")
+            logger.debug(u"Device lookup failed in MIT db.")
         return None
 
     def __build_matcher(self, pattern_string):

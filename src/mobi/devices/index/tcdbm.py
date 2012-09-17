@@ -32,8 +32,8 @@ def open(filename, flag='r', mode=0666):
         db.open(rfilename, tcflags)
         return db
     except tc.Error, e:
-        logger.error('enable to create storage for wurfl cache : %s' %
-                      e.message)
+        logger.error(
+            u'Enable to create storage for wurfl cache : %s', e.message)
         raise
 
 

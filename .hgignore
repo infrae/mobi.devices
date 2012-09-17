@@ -1,1 +1,6 @@
-src/mobi/devices/tests/var
+.pyo
+.pyc
+.cpt.py
+.egg-info
+~
+#

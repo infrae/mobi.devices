@@ -36,8 +36,7 @@ class RouterMiddleware(object):
         self.app = app
         self._config = self._parse_config(config_map)
         self._init_search()
-        logger.info("mobi.devices router config :\n %s" %
-                    str(self._config))
+        logger.info("mobi.devices router config :\n %s", str(self._config))
 
     def _init_search(self):
         tree = RadixTree()

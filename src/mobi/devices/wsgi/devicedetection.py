@@ -29,7 +29,7 @@ def deserialize_cookie(data):
     try:
         return json.loads(base64.b64decode(data) or '{}')
     except (Exception,), e:
-        logger.warn('error while deserializing cookie : %s' % str(e))
+        logger.warn('Error while deserializing cookie: %s', str(e))
         return None
 
 
@@ -73,7 +73,7 @@ class MobiDeviceMiddleware(object):
         self.cache = cache_manager.get_cache('mobi.devices')
 
         if self.debug:
-            logger.info('MobiDeviceMiddleware start in debug mode.')
+            logger.info(u'MobiDeviceMiddleware start in debug mode.')
         self.app = app
         self.set_cookie_max_age(int(cookie_max_age))
         self.classifiers = classifiers if isinstance(classifiers, list) \
@@ -90,8 +90,9 @@ class MobiDeviceMiddleware(object):
 
         response = request.get_response(self.app)
 
-        logger.info('device: %s - %s' %
-            (device.type, device.platform))
+        logger.debug(
+            u'Device detected: %s - %s.' %
+            (device.type.__name__, device.platform))
 
         if device is not None:
             self.set_device_on_cookie(response, device)
@@ -141,21 +142,21 @@ class MobiDeviceMiddleware(object):
         dtype = self.mapping.get(param)
         platform = request.GET.get(self.PARAM_NAME + '_platform', '')
         if dtype is not None:
-            logger.info('device manually set to %s' % dtype.__name__)
+            logger.debug('Device manually set to %s',  dtype.__name__)
             return Device(request.environ.get('HTTP_USER_AGENT'),
                 dtype, platform)
         return None
 
     def device_from_user_agent(self, request):
         ua = request.environ.get('HTTP_USER_AGENT', '')
-        logger.info("get device from UserAgent: %s" % ua)
+        logger.debug("Get device from UserAgent: %s" % ua)
 
         def get_device():
             return self._get_device(ua)
 
-        device = self.cache.get(key="device_lookup:%s" % ua,
-                                createfunc=get_device)
-        return device
+        return self.cache.get(
+            key="device_lookup:%s" % ua,
+            createfunc=get_device)
 
     def set_device_on_cookie(self, response, device):
         if not self.cookie_cache:

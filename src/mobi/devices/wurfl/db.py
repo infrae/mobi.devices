@@ -24,7 +24,7 @@ except ImportError:
         import dbm
         logger.info('dbm found.')
     except ImportError:
-        logger.info('dbm not found import anydbm')
+        logger.info('dbm not found import anydbm.')
         import dbm
 
 
@@ -55,7 +55,7 @@ def open_or_create(filename, wurfl_file):
     try:
         db = open_db('r')
     except:
-        logger.info('db does not exists, create it at %s' % filename)
+        logger.info('Device index does not exists, create it at %s.', filename)
         # open and trunk it
         db = open_db('n')
         try:
@@ -67,9 +67,9 @@ def open_or_create(filename, wurfl_file):
                 open_file = gzip.open
             f = open_file(wurfl_file, 'r')
             try:
-                logger.info('creating device index...')
+                logger.info('Creating device index...')
                 st = build_index_tree(db, f)
-                logger.info('storing device index...')
+                logger.info('Storing device index...')
                 db['__radixtree__'] = pickle.dumps(st)
             finally:
                 f.close()
