@@ -86,20 +86,19 @@ class MobiDeviceMiddleware(object):
             self.device_from_user_agent(request)
 
         if device is not None:
+            logger.debug(
+                u'Device detected: %s - %s.' %
+                (device.type.__name__, device.platform))
+
             self.set_device_on_request(request, device)
-
-        response = request.get_response(self.app)
-
-        logger.debug(
-            u'Device detected: %s - %s.' %
-            (device.type.__name__, device.platform))
-
-        if device is not None:
+            response = request.get_response(self.app)
             self.set_device_on_cookie(response, device)
 
-        start_response(response.status,
-            [a for a in response.headers.iteritems()])
-        return response.app_iter
+            start_response(
+                response.status,
+                [a for a in response.headers.iteritems()])
+            return response.app_iter
+        return self.app(environ, start_response)
 
     def set_cookie_max_age(self, max_age):
         if max_age <= 0:
