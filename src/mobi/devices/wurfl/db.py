@@ -24,8 +24,12 @@ except ImportError:
         import dbm
         logger.info('dbm found.')
     except ImportError:
-        logger.info('dbm not found import anydbm.')
-        import dbm
+        logger.info('dbm not found import gdbm')
+        try:
+            import gdbm as dbm
+        except ImportError:
+            logger.info('gdbm not found import anydbm')
+            import anydbm as dbm
 
 
 _dirname = os.path.dirname(__file__)

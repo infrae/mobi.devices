@@ -76,8 +76,11 @@ class MobiDeviceMiddleware(object):
             logger.info(u'MobiDeviceMiddleware start in debug mode.')
         self.app = app
         self.set_cookie_max_age(int(cookie_max_age))
-        self.classifiers = classifiers if isinstance(classifiers, list) \
-                else [classifiers]
+
+        if not isinstance(classifiers, list):
+            classifiers = [classifiers]
+
+        self.classifiers = classifiers
 
     def __call__(self, environ, start_response):
         request = Request(environ)
