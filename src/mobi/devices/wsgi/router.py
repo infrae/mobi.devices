@@ -118,6 +118,13 @@ class RouterMiddleware(object):
 # paste deploy entry point
 def router_middleware_filter_factory(global_conf, **local_conf):
     follow_path = local_conf.get('follow_path', False)
+    local_conf = local_conf.copy()
+
+    try:
+        del local_conf['follow_path']
+    except KeyError:
+        pass
+
     def filter(app):
         return RouterMiddleware(app, local_conf, follow_path=follow_path,)
 
